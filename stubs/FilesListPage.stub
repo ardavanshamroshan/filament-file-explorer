@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ resource }};
+use Ardavan\FilamentFileExplorer\Pages\FileExplorerFilesPage;
+
+class {{ class }} extends FileExplorerFilesPage
+{
+    protected static string $resource = {{ resourceClass }}::class;
+}

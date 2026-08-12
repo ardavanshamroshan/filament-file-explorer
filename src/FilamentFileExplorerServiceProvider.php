@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Ardavan\FilamentFileExplorer;
 
 use Ardavan\FilamentFileExplorer\Commands\InstallCommand;
+use Ardavan\FilamentFileExplorer\Commands\MakeAuthorizerCommand;
+use Ardavan\FilamentFileExplorer\Commands\MakeFolderMigrationCommand;
+use Ardavan\FilamentFileExplorer\Commands\MakePageCommand;
 use Ardavan\FilamentFileExplorer\Contracts\FileExplorerAuthorizer;
 use Ardavan\FilamentFileExplorer\Support\FileExplorerManager;
 use Ardavan\FilamentFileExplorer\Support\FolderTree;
@@ -22,9 +25,15 @@ class FilamentFileExplorerServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasTranslations()
-            ->hasMigrations()
+            ->discoversMigrations()
+            ->runsMigrations()
             ->hasAssets(['resources/dist', 'resources/images'])
-            ->hasCommand(InstallCommand::class);
+            ->hasCommands([
+                InstallCommand::class,
+                MakePageCommand::class,
+                MakeAuthorizerCommand::class,
+                MakeFolderMigrationCommand::class,
+            ]);
     }
 
     public function packageRegistered(): void
@@ -47,6 +56,12 @@ class FilamentFileExplorerServiceProvider extends PackageServiceProvider
             'filament-file-explorer',
             classNamespace: 'Ardavan\\FilamentFileExplorer\\Livewire',
         );
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../stubs' => base_path('stubs/filament-file-explorer'),
+            ], 'filament-file-explorer-stubs');
+        }
 
         $this->registerRoutes();
     }

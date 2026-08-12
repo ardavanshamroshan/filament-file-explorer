@@ -1,23 +1,24 @@
 # Explorer page
 
-Use `InteractsWithFileExplorer` or extend `FileExplorerPage`.
+Prefer `HasFileExplorer` on the model, then generate a thin page:
 
-![Explorer](../images/explorer-grid-light.svg)
+```bash
+php artisan filament-file-explorer:make-page ProjectResource --explorer
+```
 
 ```php
-use Ardavan\FilamentFileExplorer\Pages\Concerns\InteractsWithFileExplorer;
+use Ardavan\FilamentFileExplorer\Pages\FileExplorerPage;
 
-protected string $view = 'filament-file-explorer::filament.pages.file-explorer';
-
-protected function fileExplorerScopeKey(): string
+class ManageProjectFiles extends FileExplorerPage
 {
-    return 'vault.'.$this->record->id;
-}
-
-protected function resolveFileExplorerRootFolderId(): int
-{
-    return (int) $this->record->folder_id;
+    protected static string $resource = ProjectResource::class;
 }
 ```
 
-Deep-link to a folder: append `?folder={id}` to the page URL.
+Page resolves `scopeKey` + `rootFolderId` from the model trait.
+
+Override methods only when the model does **not** use `HasFileExplorer`.
+
+![Explorer](../images/explorer-grid-light.svg)
+
+Deep-link folder: `?folder={id}`.

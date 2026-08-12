@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Ardavan\FilamentFileExplorer\Authorizers\AllowAllAuthorizer;
+use Ardavan\FilamentFileExplorer\Models\Folder;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
+class {{ class }} extends AllowAllAuthorizer
+{
+    public function canAccess(string $scopeKey, int $rootFolderId): bool
+    {
+        // TODO: gate by authenticated user / ownership of $scopeKey
+        return parent::canAccess($scopeKey, $rootFolderId);
+    }
+
+    public function abilities(string $scopeKey, int $rootFolderId): array
+    {
+        return parent::abilities($scopeKey, $rootFolderId);
+    }
+
+    public function mediaDeleteState(string $scopeKey, Media $media): array
+    {
+        return parent::mediaDeleteState($scopeKey, $media);
+    }
+
+    public function folderDeleteState(string $scopeKey, Folder $folder): array
+    {
+        return parent::folderDeleteState($scopeKey, $folder);
+    }
+}

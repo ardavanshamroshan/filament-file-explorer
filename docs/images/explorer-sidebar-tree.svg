@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="720" viewBox="0 0 400 720">
   <rect width="400" height="720" fill="#f4f4f5"/>
   <text x="20" y="40" fill="#71717a" font-family="system-ui" font-size="12">EXPLORER</text>
-  <text x="36" y="80" fill="#0d9488" font-family="system-ui" font-size="14" font-weight="600">¾ Home</text>
+  <text x="36" y="80" fill="#0d9488" font-family="system-ui" font-size="14" font-weight="600">ï¿½ Home</text>
   <text x="52" y="110" fill="#52525b" font-family="system-ui" font-size="13">Documents</text>
   <text x="52" y="140" fill="#52525b" font-family="system-ui" font-size="13">Images</text>
   <text x="52" y="170" fill="#52525b" font-family="system-ui" font-size="13">Archive</text>

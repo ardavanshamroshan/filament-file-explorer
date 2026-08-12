@@ -12,7 +12,9 @@ Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media
 - Multi-select with marquee selection
 - Context menu, drag-and-drop upload, folder zip download
 - **Filament plugin** with auto-loaded CSS/JS assets
-- Reusable **files table** concern for Filament resources
+- **`HasFileExplorer` model trait** — auto root folder + scope key
+- Thin **resource page stubs** — generate only what you need; publish stubs only to customize
+- Reusable **files table** page
 - **Form picker** field to browse files in modals
 - Generic **`scopeKey` + `rootFolderId`** API — no domain coupling
 - Authorization via **`FileExplorerAuthorizer`** contract
@@ -30,11 +32,10 @@ Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media
 ## Installation
 
 ```bash
-composer require ardavan/filament-file-explorer:"^1.0" -W
+composer require ardavan/filament-file-explorer:"^0.5" -W
 
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
-php artisan filament-file-explorer:install
-php artisan migrate
+php artisan filament-file-explorer:install --migrate
 ```
 
 Register the plugin in your panel provider:
@@ -49,107 +50,114 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Bind your authorizer (optional — demo uses allow-all):
+## Fast usage
+
+### 1. Model trait
 
 ```php
-use Ardavan\FilamentFileExplorer\Contracts\FileExplorerAuthorizer;
+use Ardavan\FilamentFileExplorer\Models\Concerns\HasFileExplorer;
 
-$this->app->singleton(FileExplorerAuthorizer::class, App\Support\YourFileExplorerAuthorizer::class);
-```
-
-Or configure via plugin:
-
-```php
-FilamentFileExplorerPlugin::make()
-    ->authorizer(App\Support\YourFileExplorerAuthorizer::class);
-```
-
-## Quick start
-
-### 1. Create a root folder
-
-```php
-use Ardavan\FilamentFileExplorer\Facades\FileExplorer;
-
-$root = FileExplorer::createRoot('Project Files', 'project-files');
-$record->update(['folder_id' => $root->id]);
-```
-
-### 2. Embed explorer in a Filament page
-
-```php
-use Ardavan\FilamentFileExplorer\Pages\Concerns\InteractsWithFileExplorer;
-
-class ProjectFilesPage extends Page
+class Project extends Model
 {
-    use InteractsWithFileExplorer;
+    use HasFileExplorer;
+}
+```
 
-    protected string $view = 'filament-file-explorer::filament.pages.file-explorer';
+Add `folder_id`:
 
-    public function mount(int|string $record): void
+```bash
+php artisan filament-file-explorer:make-folder-migration projects
+php artisan migrate
+```
+
+Root folder auto-creates on model `creating` when `folder_id` is empty.
+
+### 2. Generate resource pages (from stubs)
+
+```bash
+php artisan filament-file-explorer:make-page ProjectResource
+```
+
+Creates thin pages that extend package bases. **Do not publish stubs** unless you want to change generated templates:
+
+```bash
+# optional — customize generators only
+php artisan vendor:publish --tag=filament-file-explorer-stubs
+```
+
+Register pages:
+
+```php
+use Ardavan\FilamentFileExplorer\Resources\Concerns\HasFileExplorerResource;
+
+class ProjectResource extends Resource
+{
+    use HasFileExplorerResource;
+
+    public static function getPages(): array
     {
-        $this->record = $this->resolveRecord($record);
-        $this->mountFileExplorer();
-    }
-
-    protected function fileExplorerScopeKey(): string
-    {
-        return 'project.'.$this->record->getKey();
-    }
-
-    protected function resolveFileExplorerRootFolderId(): int
-    {
-        return (int) $this->record->folder_id;
+        return [
+            'index' => Pages\ListProjects::route('/'),
+            'create' => Pages\CreateProject::route('/create'),
+            'edit' => Pages\EditProject::route('/{record}/edit'),
+            ...static::getFileExplorerPages(
+                Pages\ManageProjectFiles::class,
+                Pages\ListProjectFiles::class,
+            ),
+        ];
     }
 }
 ```
 
-![Files table](docs/images/files-table.svg)
-
-### 3. Files table on a resource sub-page
+Generated explorer page:
 
 ```php
-use Ardavan\FilamentFileExplorer\Tables\Concerns\InteractsWithFileExplorerTable;
-
-class ListProjectFiles extends Page implements HasTable
+class ManageProjectFiles extends FileExplorerPage
 {
-    use InteractsWithTable;
-    use InteractsWithFileExplorerTable;
-
-    public function table(Table $table): Table
-    {
-        return $this->configureFileExplorerTable($table);
-    }
-
-    protected function fileExplorerScopeKey(): string
-    {
-        return 'project.'.$this->record->getKey();
-    }
-
-    protected function fileExplorerRootFolderId(): int
-    {
-        return (int) $this->record->folder_id;
-    }
-
-    protected function fileExplorerExplorerUrl(?int $folderId = null): string
-    {
-        $url = ProjectFilesExplorerPage::getUrl(['record' => $this->record]);
-
-        return $folderId ? $url.'?folder='.$folderId : $url;
-    }
+    protected static string $resource = ProjectResource::class;
 }
 ```
 
-![Form picker](docs/images/form-picker-modal.svg)
+### 3. Authorizer (optional)
 
-### 4. Form field picker
+```bash
+php artisan filament-file-explorer:make-authorizer
+```
+
+Bind in `AppServiceProvider` or config.
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `filament-file-explorer:install` | Publish config (`--stubs`, `--migrate`) |
+| `filament-file-explorer:make-page {Resource}` | Generate explorer + files list pages |
+| `filament-file-explorer:make-folder-migration {table}` | Add `folder_id` FK |
+| `filament-file-explorer:make-authorizer` | Generate authorizer class |
+
+## Demo app
+
+Local Filament v5 demo (path repo install):
+
+```bash
+# from a Laravel app with path repo ../filament-file-explorer
+composer require ardavan/filament-file-explorer:@dev
+php artisan filament-file-explorer:install --migrate
+php artisan db:seed
+```
+
+Login: `admin@example.com` / `password`
+
+See also [demo/README.md](demo/README.md) for the in-package QA notes.
+
+## Form picker
 
 ```php
 use Ardavan\FilamentFileExplorer\Forms\Components\FileExplorerPicker;
 
 FileExplorerPicker::make('attachment_ids')
-    ->scopeKey('project.'.$record->id)
-    ->rootFolderId($record->folder_id)
+    ->scopeKey($record->fileExplorerScopeKey())
+    ->rootFolderId($record->fileExplorerRootFolderId())
     ->multiple();
 ```
 
@@ -162,23 +170,20 @@ FileExplorerPicker::make('attachment_ids')
 - [Form picker](docs/form-picker.md)
 - [Configuration](docs/configuration.md)
 
-## UI previews
+## Development
 
-| Explorer (grid) | Sidebar tree | Context menu |
-|-----------------|--------------|--------------|
-| ![Grid](docs/images/explorer-grid-light.svg) | ![Tree](docs/images/explorer-sidebar-tree.svg) | ![Menu](docs/images/explorer-context-menu.svg) |
+```bash
+composer install
+./vendor/bin/pest
+./vendor/bin/pint
+```
 
-| List view | Dark mode |
-|-----------|-----------|
-| ![List](docs/images/explorer-list-view.svg) | ![Dark](docs/images/explorer-grid-dark.svg) |
+Graphify output (`graphify-out/`) is gitignored — run locally:
 
-## Publishing to Filament plugins directory
-
-1. Push to public GitHub and Packagist
-2. Request author access at [filamentphp.com/author](https://filamentphp.com/author)
-3. Submit plugin with hero image (2560×1440 JPEG, 16:9)
-4. Tag: dark mode, multilingual
+```bash
+graphify update .
+```
 
 ## License
 
-MIT © Ardavan
+MIT © [Ardavan Shamroshan](https://github.com/ardavanshamroshan)

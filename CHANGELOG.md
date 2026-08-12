@@ -6,6 +6,17 @@ Version numbering reflects the in-app file explorer evolution in erp.cbiha
 before this standalone package (Finder UI, drag selection, ACL, list/explorer
 split, and full filemanager merge — five feature cycles).
 
+## Unreleased
+
+### Added
+
+- `HasFileExplorer` model trait (auto root folder, scope key, `ensureFileExplorerRoot()`)
+- `FileExplorerFilesPage` base page for files table
+- `HasFileExplorerResource` helpers for page registration + table action
+- Generator stubs (`ExplorerPage`, `FilesListPage`, `Authorizer`, `FolderIdMigration`)
+- Commands: `make-page`, `make-authorizer`, `make-folder-migration`
+- Install `--stubs` / `--migrate`; stubs publishable only on demand
+
 ## 0.5.0 - 2026-08-12
 
 First public package release extracted from production ERP usage.

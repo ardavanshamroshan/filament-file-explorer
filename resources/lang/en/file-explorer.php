@@ -3,6 +3,7 @@
 return [
     'empty' => 'No folder selected.',
     'explorer' => 'Explorer',
+    'files' => 'Files',
     'folder_without_title' => 'Untitled folder',
     'folder_already_exists' => 'A folder with this name already exists.',
     'search_results' => '{0} No results|{1} :count result|[2,*] :count results',

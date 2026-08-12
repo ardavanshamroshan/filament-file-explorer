@@ -1,16 +1,32 @@
 # Installation
 
-See [README](../README.md) for the full install flow.
+```bash
+composer require ardavan/filament-file-explorer:"^0.5" -W
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+php artisan filament-file-explorer:install --migrate
+```
 
-## Steps
+Register `FilamentFileExplorerPlugin::make()` on the panel.
 
-1. `composer require ardavan/filament-file-explorer:"^1.0" -W`
-2. Publish Spatie media migrations
-3. `php artisan filament-file-explorer:install`
-4. `php artisan migrate`
-5. Register `FilamentFileExplorerPlugin::make()` on your panel
-6. Bind `FileExplorerAuthorizer` in your app
+## Fast path
 
-## Demo app
+1. Model: `use HasFileExplorer`
+2. `php artisan filament-file-explorer:make-folder-migration {table}` → migrate
+3. `php artisan filament-file-explorer:make-page {Resource}` → register `files` / `files-list` pages
+4. Optional: `php artisan filament-file-explorer:make-authorizer`
 
-See [demo/README.md](../demo/README.md) for a local Filament panel with sample data.
+## Stubs
+
+Generators use package stubs by default.
+
+**Publish stubs only when you want to change generated output:**
+
+```bash
+php artisan vendor:publish --tag=filament-file-explorer-stubs
+# or
+php artisan filament-file-explorer:install --stubs
+```
+
+Published path: `stubs/filament-file-explorer/`.
+
+If you do not publish, package stubs stay the source of truth.

@@ -1,17 +1,25 @@
 # Files table
 
-Use `InteractsWithFileExplorerTable` on any Filament page implementing `HasTable`.
+Generate:
 
-![Files table](../images/files-table.svg)
+```bash
+php artisan filament-file-explorer:make-page ProjectResource --list
+```
 
 ```php
-public function table(Table $table): Table
+use Ardavan\FilamentFileExplorer\Pages\FileExplorerFilesPage;
+
+class ListProjectFiles extends FileExplorerFilesPage
 {
-    return $this->configureFileExplorerTable($table);
+    protected static string $resource = ProjectResource::class;
 }
 ```
 
-Implement:
+Or use `InteractsWithFileExplorerTable` on a custom page.
+
+![Files table](../images/files-table.svg)
+
+Required hooks (already implemented on `FileExplorerFilesPage` when model uses `HasFileExplorer`):
 
 - `fileExplorerScopeKey()`
 - `fileExplorerRootFolderId()`
