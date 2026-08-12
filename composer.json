@@ -11,10 +11,11 @@
         "livewire"
     ],
     "license": "MIT",
+    "version": "0.5.0",
     "authors": [
         {
-            "name": "Ardavan",
-            "role": "Developer"
+            "name": "Ardavan Shamroshan",
+            "email": "shamroshanardavan@gmail.com"
         }
     ],
     "require": {
