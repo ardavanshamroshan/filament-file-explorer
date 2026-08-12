@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://ardavanshamroshan.github.io/filament-file-explorer/">
-    <img src="docs/images/explorer-grid.png" alt="Filament File Explorer" width="920">
+    <img src="docs/images/cover.png" alt="Filament File Explorer — Finder-style files for Filament" width="920">
   </a>
 </p>
 
@@ -15,7 +15,7 @@
   <a href="https://ardavanshamroshan.github.io/filament-file-explorer/"><img src="https://img.shields.io/badge/docs-github.io-f59e0b?style=for-the-badge&labelColor=1c1917" alt="Documentation"></a>
   <a href="https://packagist.org/packages/ardavan/filament-file-explorer"><img src="https://img.shields.io/packagist/v/ardavan/filament-file-explorer?style=for-the-badge&labelColor=1c1917&color=0d9488" alt="Packagist"></a>
   <a href="https://packagist.org/packages/ardavan/filament-file-explorer"><img src="https://img.shields.io/packagist/dt/ardavan/filament-file-explorer?style=for-the-badge&labelColor=1c1917&color=78716c" alt="Downloads"></a>
-  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-stone?style=for-the-badge&labelColor=1c1917" alt="MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-stone?style=for-the-badge&labelColor=1c1917" alt="MIT"></a>
 </p>
 
 <p align="center">
