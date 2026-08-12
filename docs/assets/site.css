@@ -210,6 +210,8 @@ code, pre { font-family: var(--mono); }
   --rocket-color: var(--color-honey-100);
 }
 .rocket-stage [data-meteor] { position: absolute; right: -1.25rem; z-index: 0; }
+.rocket-stage [data-meteor].opacity-50,
+.opacity-50 { opacity: 0.5; }
 .rocket-stage [data-meteor] svg path { fill: var(--meteor-color); }
 .rocket-stage [data-rocket-bob] { position: relative; z-index: 1; }
 .rocket-stage [data-rocket-bob] svg { width: 1.45rem; height: 1.45rem; color: currentColor; opacity: 0.9; }
