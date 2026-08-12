@@ -64,7 +64,9 @@ class FilamentFileExplorerServiceProvider extends PackageServiceProvider
             classNamespace: 'Ardavan\\FilamentFileExplorer\\Livewire',
         );
 
+        // Livewire 4 blade tags use dots; :: form is for @livewire() / namespaces.
         Livewire::component('filament-file-explorer::file-explorer', FileExplorer::class);
+        Livewire::component('filament-file-explorer.file-explorer', FileExplorer::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
