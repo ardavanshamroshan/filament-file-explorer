@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
-"""Build Filament-branded docs HTML pages."""
+"""Build Filament-branded docs: home + SPA guide (hash nav, no reload)."""
 from pathlib import Path
+import json
+import re
 
 ROOT = Path(__file__).resolve().parent
 GUIDE = ROOT / "guide"
 
-FILAMENT_LOGO = r'''
-<svg class="h-10" viewBox="0 0 144 43" version="1.1" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <path class="logoF1 fill-cocoa" d="M7.223,12.685L7.223,11.42C7.223,9.471 7.871,8.001 9.813,8.001L11.55,8.001L11.55,4L9.813,4C5.349,4 3.033,6.769 3.033,11.42L3.033,12.685L0,12.685L0,16.035L3.033,16.035L3.033,28.651L7.223,28.651L7.223,16.035L12.348,16.035L12.348,12.685L7.223,12.685Z"></path>
-  <path class="logoF2 fill-cocoa" d="M9.772,8.012L12.283,8.012C12.809,6.58 13.529,5.243 14.407,4.03L9.772,4.03C5.327,4.03 3.02,6.787 3.02,11.416L3.02,12.676L0,12.676L0,16.011L3.02,16.011L3.02,28.571L7.194,28.571L7.194,16.011L11.426,16.011C11.324,15.268 11.267,14.511 11.267,13.74C11.267,13.382 11.282,13.028 11.305,12.676L7.194,12.676L7.194,11.416C7.194,9.476 7.839,8.012 9.772,8.012" style="opacity:.35"></path>
-  <rect class="logoL fill-cocoa" x="44.27" y="4.029" width="4.139" height="24.542"></rect>
-  <path class="logoA fill-cocoa" d="M59.517,24.895C57.243,24.895 55.139,23.159 55.139,20.606C55.139,18.052 57.243,16.317 59.517,16.317C61.791,16.317 63.86,17.848 63.86,20.606C63.86,23.363 61.757,24.895 59.517,24.895ZM63.86,14.649C62.706,12.879 60.365,12.335 58.94,12.335C54.766,12.335 50.864,15.5 50.864,20.606C50.864,25.711 54.766,28.877 58.94,28.877C60.501,28.877 62.842,28.162 63.86,26.528L63.86,28.571L67.999,28.571L67.999,12.675L63.86,12.675L63.86,14.649Z"></path>
-  <path class="logoM fill-cocoa" d="M89.815,12.335C88.56,12.335 86.32,12.709 84.827,15.331C83.945,13.39 82.282,12.505 79.772,12.369C78.278,12.369 76.106,13.084 75.225,15.024L75.225,12.676L71.085,12.676L71.085,28.572L75.225,28.572L75.225,20.096C75.225,17.374 76.853,16.386 78.55,16.386C80.247,16.386 81.434,17.611 81.468,19.824L81.468,28.571L85.608,28.571L85.608,20.096C85.608,17.679 86.965,16.385 88.832,16.385C90.528,16.385 91.818,17.645 91.818,19.925L91.818,28.571L95.924,28.571L95.924,19.483C95.924,14.819 93.65,12.335 89.816,12.335"></path>
-  <path class="logoE fill-cocoa" d="M102.121,19.176C102.427,17.031 104.123,15.806 106.295,15.806C108.331,15.806 109.959,16.997 110.265,19.176L102.121,19.176ZM106.261,12.335C101.748,12.335 98.05,15.569 98.05,20.572C98.05,25.576 101.748,28.912 106.261,28.912C109.179,28.912 112.233,27.788 113.658,25.065C112.64,24.52 111.487,23.908 110.503,23.363C109.757,24.725 108.128,25.406 106.533,25.406C104.192,25.406 102.427,24.112 102.156,22.002L114.235,22.002C114.269,21.628 114.303,20.981 114.303,20.573C114.303,15.569 110.775,12.335 106.262,12.335"></path>
-  <path class="logoN fill-cocoa" d="M125.97,12.335C124.137,12.335 122.135,13.322 121.253,15.023L121.253,12.675L117.113,12.675L117.113,28.571L121.253,28.571L121.253,20.096C121.253,17.338 122.848,16.385 124.714,16.385C126.579,16.385 127.734,17.61 127.734,19.925L127.734,28.571L131.874,28.571L131.874,19.176C131.874,14.682 129.668,12.334 125.97,12.334"></path>
-  <path class="logoT fill-cocoa" d="M136.535,6.616L136.535,12.675L133.65,12.675L133.65,16.011L136.535,16.011L136.535,28.571L140.641,28.571L140.641,16.011L144,16.011L144,12.675L140.641,12.675L140.641,6.616L136.535,6.616Z"></path>
-  <path class="logoLightBulb fill-honey-200" d="M25.233,7.782C25.233,9.213 26.455,10.303 27.915,10.303C29.375,10.303 30.53,9.213 30.53,7.782C30.53,6.352 29.341,5.296 27.915,5.296C26.489,5.296 25.233,6.386 25.233,7.782Z"></path>
-  <path class="logoLightBulb fill-honey-200" d="M33.7,1.323C30.892,-0.035 27.654,-0.361 24.586,0.407C22.56,0.916 20.657,1.909 19.088,3.277C18.809,3.513 18.539,3.765 18.277,4.029C17.4,4.915 16.623,5.955 15.965,7.135C15.802,7.423 15.652,7.715 15.511,8.011C14.805,9.496 14.374,11.08 14.241,12.674C14.211,13.046 14.194,13.419 14.195,13.792C14.185,14.526 14.244,15.266 14.368,16.01C14.511,16.859 14.736,17.712 15.051,18.56C15.565,19.922 16.262,21.168 16.929,22.322C17.603,23.527 18.154,24.541 18.648,25.566C19.044,26.406 19.395,27.283 19.698,28.178C19.796,28.469 19.889,28.762 19.977,29.057L20.155,29.691C20.299,30.209 20.577,30.648 20.957,30.959C21.656,31.533 22.585,31.667 23.464,31.308L25.825,30.177L28.861,28.723L28.786,27.072L30.929,26.852L30.953,26.85L30.971,26.837C31.092,26.751 31.113,26.425 31.114,26.24C31.115,26.094 31.105,25.604 30.928,25.408L29.139,24.285L30.922,24.119L30.941,24.105C31.088,23.996 31.107,23.333 31.008,22.95C30.948,22.712 30.845,22.56 30.72,22.507L29.086,21.516C29.248,21.507 29.416,21.503 29.59,21.498C29.985,21.488 30.393,21.478 30.736,21.406C30.857,21.381 30.944,21.279 30.993,21.104C31.092,20.75 31.021,20.131 30.855,19.901C30.775,19.791 30.413,19.576 29.577,19.103C29.33,18.963 29.096,18.831 28.973,18.754C29.105,18.748 29.273,18.747 29.448,18.745C30.171,18.738 30.696,18.723 30.862,18.584C31,18.469 31.042,17.837 30.938,17.438C30.881,17.224 30.787,17.083 30.67,17.029L29.036,16.038L30.701,15.899L30.735,15.889C30.934,15.789 30.97,15.291 30.946,15.001C30.929,14.801 30.867,14.444 30.642,14.296L28.125,12.755L28.271,11.465L25.604,11.543L25.621,11.643C25.644,11.788 25.624,11.963 25.602,12.149C25.559,12.531 25.509,12.963 25.856,13.259C25.976,13.361 26.375,13.59 26.797,13.831C27.063,13.984 27.406,14.18 27.575,14.29C27.467,14.327 27.315,14.318 27.167,14.31C27.071,14.304 26.971,14.299 26.882,14.306L26.754,14.314C26.334,14.342 25.946,14.371 25.829,14.426C25.627,14.522 25.565,14.936 25.594,15.281C25.608,15.454 25.669,15.873 25.937,16.043L27.573,17.036L25.859,17.187L25.825,17.197C25.658,17.281 25.634,17.616 25.634,17.809C25.634,18.125 25.706,18.558 25.924,18.745L27.619,19.793C27.556,19.794 27.492,19.797 27.429,19.798C26.879,19.812 26.31,19.827 25.805,19.973L25.778,19.987C25.652,20.082 25.643,20.734 25.731,21.104C25.784,21.327 25.874,21.47 25.986,21.523L27.623,22.515L25.973,22.666L25.942,22.674C25.594,22.84 25.725,23.76 25.814,24.029L25.828,24.073L27.694,25.278L26.048,25.389C25.936,25.395 25.881,25.457 25.838,25.513C25.736,25.649 25.716,26.064 25.725,26.687L22.928,28.121C22.526,26.781 22.026,25.473 21.44,24.227C20.905,23.117 20.325,22.049 19.616,20.782C18.982,19.686 18.377,18.607 17.949,17.469C17.494,16.244 17.272,15.013 17.289,13.806C17.281,12.04 17.755,10.261 18.66,8.658C19.335,7.45 20.154,6.435 21.099,5.635C22.315,4.575 23.78,3.809 25.335,3.418C25.403,3.4 25.471,3.386 25.539,3.371L25.601,3.358C27.314,2.978 29.114,3.038 30.807,3.528C31.353,3.686 31.877,3.886 32.366,4.122C34.263,5.023 35.908,6.558 36.999,8.449C38.197,10.474 38.699,12.799 38.413,14.999C38.278,16.152 37.912,17.369 37.328,18.611C37.019,19.238 36.663,19.862 36.318,20.466C36.1,20.849 35.882,21.233 35.67,21.623C35.027,22.81 33.998,25.213 33.66,26.003C33.6,26.143 33.562,26.233 33.546,26.266C33.191,27.089 32.681,28.272 32.517,28.649L29.277,30.223L22.526,33.501C21.759,33.811 21.307,34.598 21.426,35.422C21.542,36.23 22.207,36.854 23.065,36.954L27.329,37.104L21.883,40.192L23.155,42.998L34.252,37.646C35.135,37.238 35.527,36.211 35.146,35.309C34.893,34.709 34.312,34.295 33.63,34.228L29.608,33.244L34.727,31.075C34.852,31.018 34.859,31.013 36.174,27.988C36.234,27.849 36.296,27.705 36.362,27.553C36.363,27.551 36.374,27.525 36.394,27.479C36.797,26.527 37.799,24.195 38.388,23.107C38.582,22.747 38.784,22.392 38.987,22.038L39.004,22.009C39.355,21.395 39.752,20.699 40.115,19.961C40.849,18.399 41.31,16.857 41.483,15.382C41.856,12.51 41.211,9.489 39.667,6.877C38.271,4.459 36.15,2.487 33.699,1.321"></path>
-</svg>
-'''
+COVER_URL = "https://github.com/ardavanshamroshan/filament-file-explorer/raw/main/docs/images/cover.png"
 
 CORNER = '''<svg class="h-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11" fill="none"><path d="M9.5 0.5H0.5V9.5" class="stroke-current" stroke="currentColor" stroke-linecap="round"></path></svg>'''
 
@@ -33,7 +22,10 @@ ROCKET_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" fill
 
 METEOR = '''<svg xmlns="http://www.w3.org/2000/svg" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M17.4801 0L0.610057 15.82C0.610057 15.82 0.280057 16.27 0.700057 16.71C1.11006 17.15 1.65006 16.77 1.65006 16.77L17.4801 0Z"></path></svg>'''
 
-ARROW = '''<svg xmlns="http://www.w3.org/2000/svg" data-arrow viewBox="0 0 28 22" fill="none" aria-hidden="true"><path class="fill-current" fill="currentColor" d="M1 10H0V12H1V10ZM27 12C27.5523 12 28 11.5523 28 11C28 10.4477 27.5523 10 27 10V12ZM1 12H27V10H1V12ZM16 1C16 2.47 16.8 3.88 17.77 5.08C18.77 6.3 20.07 7.45 21.34 8.43C22.61 9.41 23.88 10.25 24.83 10.84C25.3 11.13 25.7 11.36 25.97 11.52L27.38 10.02C26.9 9.76 26.25 9.35 25.48 8.86C24.35 8.14 22.97 7.2 21.66 6.18C20.36 5.17 19.15 4.05 18.32 3.02C17.51 2.03 17 1.35 17 1H16Z"></path></svg>'''
+ARROW = '''<svg xmlns="http://www.w3.org/2000/svg" data-arrow="data-arrow" class="h-3.25 shrink-0" aria-hidden="true" viewBox="0 0 28 22" fill="none">
+<path class="fill-current" fill="currentColor" d="M1 10H5.96046e-08V12H1V10ZM27 12C27.5523 12 28 11.5523 28 11C28 10.4477 27.5523 10 27 10V12ZM18 1V5.96046e-08H16V1H18ZM26.4207 11.7774C26.9055 12.0419 27.5129 11.8632 27.7774 11.3783C28.0419 10.8935 27.8632 10.286 27.3783 10.0216L26.4207 11.7774ZM15.9999 20.8995V21.8995H17.9999V20.8995H15.9999ZM1 12H26.8994V10H1V12ZM26.8994 12H27V10H26.8994V12ZM16 1C16 2.47241 16.7953 3.87873 17.7716 5.0769C18.7678 6.29956 20.0716 7.44977 21.3383 8.42854C22.6109 9.41186 23.8784 10.2469 24.825 10.835C25.2993 11.1295 25.6952 11.3635 25.9738 11.5245C26.1131 11.605 26.2233 11.6674 26.2993 11.71C26.3374 11.7314 26.3669 11.7478 26.3873 11.7591C26.3975 11.7647 26.4055 11.7691 26.411 11.7721C26.4138 11.7737 26.416 11.7749 26.4176 11.7758C26.4184 11.7762 26.4191 11.7765 26.4196 11.7768C26.4199 11.777 26.4201 11.7771 26.4202 11.7772C26.4205 11.7773 26.4207 11.7774 26.8995 10.8995C27.3783 10.0216 27.3784 10.0217 27.3785 10.0217C27.3785 10.0217 27.3785 10.0217 27.3785 10.0217C27.3784 10.0216 27.3781 10.0215 27.3777 10.0213C27.3769 10.0208 27.3756 10.0201 27.3736 10.019C27.3697 10.0168 27.3634 10.0134 27.3549 10.0087C27.3378 9.99926 27.3118 9.98479 27.2773 9.96547C27.2084 9.92682 27.1058 9.86878 26.9745 9.79288C26.7117 9.64102 26.3342 9.41799 25.8804 9.13606C24.9708 8.57104 23.7635 7.77501 22.5612 6.84596C21.353 5.91235 20.182 4.86894 19.322 3.81356C18.4422 2.73371 18 1.77759 18 1H16ZM26.8994 11C26.5248 10.0728 26.5245 10.0729 26.5242 10.0731C26.524 10.0731 26.5237 10.0733 26.5234 10.0734C26.5228 10.0736 26.522 10.0739 26.5211 10.0743C26.5193 10.0751 26.5169 10.076 26.5138 10.0773C26.5078 10.0797 26.4994 10.0832 26.4888 10.0876C26.4674 10.0964 26.4369 10.1091 26.3979 10.1257C26.3199 10.1587 26.2077 10.2071 26.0662 10.2703C25.7834 10.3967 25.3826 10.5825 24.903 10.824C23.9463 11.3055 22.6639 12.0142 21.3751 12.919C20.0914 13.8201 18.7665 14.94 17.7546 16.2535C16.7415 17.5685 15.9999 19.1342 15.9999 20.8995H17.9999C17.9999 19.715 18.4958 18.5685 19.3389 17.4742C20.1831 16.3784 21.333 15.3922 22.5242 14.5559C23.7103 13.7232 24.9028 13.0632 25.8022 12.6104C26.2507 12.3846 26.6233 12.2119 26.8818 12.0965C27.011 12.0388 27.1115 11.9955 27.1785 11.967C27.212 11.9528 27.2371 11.9424 27.2533 11.9357C27.2613 11.9324 27.2671 11.93 27.2706 11.9286C27.2724 11.9279 27.2735 11.9274 27.2741 11.9271C27.2744 11.927 27.2745 11.927 27.2745 11.927C27.2745 11.927 27.2744 11.927 27.2744 11.927C27.2742 11.9271 27.274 11.9272 26.8994 11Z"></path>
+</svg>'''
+
 CHEVRON = '''<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'''
 
 GH_ICON = '''<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>'''
@@ -41,43 +33,43 @@ GH_ICON = '''<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><pa
 WEB_ICON = '''<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'''
 
 PAGES = [
+    ("overview", "Overview"),
     ("installation", "Installation"),
-    ("explorer", "Explorer page"),
+    ("explorer", "Explorer"),
     ("files-table", "Files table"),
     ("form-picker", "Form picker"),
     ("authorization", "Authorization"),
+    ("helpers", "Helpers & usage"),
     ("configuration", "Configuration"),
 ]
+
+GUIDE_LEADS = {
+    "overview": "What you get: Finder UI, table, picker, authorizer, generators.",
+    "installation": "Composer, Media Library, theme source, plugin registration.",
+    "explorer": "Grid/list, toolbar, context menu, Get Info, clipboard.",
+    "files-table": "Flat Filament table over the file-explorer collection.",
+    "form-picker": "Modal picker to attach explorer media into forms.",
+    "authorization": "Gate browse / upload / rename / delete with a small contract.",
+    "helpers": "Trait helpers, Livewire props, facade, CLI generators.",
+    "configuration": "Publish config for collection, disk, upload rules, UI.",
+}
 
 
 def colorize(code: str, lang: str) -> str:
     import html as _html
-    import re
     esc = _html.escape(code)
     if lang in ("bash", "shell"):
         lines = []
         for line in esc.split("\n"):
-            line = re.sub(
-                r"^(\s*)(composer|php|npm|npx)(\b)",
-                r'\1<span class="tok-cmd">\2</span>\3',
-                line,
-            )
-            line = re.sub(
-                r"(--[a-zA-Z][\w-]*)",
-                r'<span class="tok-flag">\1</span>',
-                line,
-            )
-            line = re.sub(
-                r"(&quot;.*?&quot;)",
-                r'<span class="tok-str">\1</span>',
-                line,
-            )
+            line = re.sub(r"^(\s*)(composer|php|npm|npx)(\b)", r'\1<span class="tok-cmd">\2</span>\3', line)
+            line = re.sub(r"(--[a-zA-Z][\w-]*)", r'<span class="tok-flag">\1</span>', line)
+            line = re.sub(r"(&quot;.*?&quot;)", r'<span class="tok-str">\1</span>', line)
             lines.append(line)
         return "\n".join(lines)
-    if lang in ("php", "css"):
+    if lang in ("php", "css", "blade"):
         esc = re.sub(r"(?m)(//.*?$)", r'<span class="tok-cmt">\1</span>', esc)
         esc = re.sub(
-            r"\b(use|return|function|public|final|class|implements|null|bool|true|false|new)\b",
+            r"\b(use|return|function|public|final|class|implements|null|bool|true|false|new|static)\b",
             r'<span class="tok-kw">\1</span>',
             esc,
         )
@@ -96,87 +88,17 @@ def code_panel(title: str, code: str, lang: str = "bash") -> str:
 </div>'''
 
 
-GUIDE_BODIES = {
-    "installation": f"""
-<p>Install the package, run Media Library migrations, then register the Filament plugin.</p>
-{code_panel("terminal", '''composer require ardavan/filament-file-explorer:"^0.5" -W
-
-php artisan vendor:publish --provider="Spatie\\\\MediaLibrary\\\\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
-php artisan filament-file-explorer:install --migrate
-php artisan vendor:publish --tag=filament-file-explorer-assets --force''', "bash")}
-
-<h2>Panel registration</h2>
-{code_panel("AdminPanelProvider.php", '''use Ardavan\\\\FilamentFileExplorer\\\\FilamentFileExplorerPlugin;
-
-public function panel(Panel $panel): Panel
-{{
-    return $panel
-        ->viteTheme('resources/css/filament/admin/theme.css')
-        ->plugin(FilamentFileExplorerPlugin::make());
-}}''', "php")}
-
-<h2>Theme (required)</h2>
-<p>Explorer Blade views use Tailwind utilities. Source the package views and rebuild.</p>
-{code_panel("resources/css/filament/admin/theme.css", '''@import '../../../../vendor/filament/filament/resources/css/theme.css';
-
-@source '../../../../app/Filament/**/*';
-@source '../../../../resources/views/filament/**/*';
-@source '../../../../vendor/ardavan/filament-file-explorer/resources/views/**/*.blade.php';''', "css")}
-{code_panel("build", '''npm run build
-php artisan filament:assets''', "bash")}
-
-<figure class="shot">
-  <img src="../images/cover.png" alt="Filament File Explorer cover" width="1200" height="750" loading="lazy" decoding="async">
-  <figcaption><span>Theme + assets ready</span><span class="tag">Cover</span></figcaption>
-</figure>
-
-<h2>Fast path</h2>
-<ol>
-  <li>Model: <code>use HasFileExplorer</code></li>
-  <li><code>php artisan filament-file-explorer:make-folder-migration {{table}}</code> → migrate</li>
-  <li><code>php artisan filament-file-explorer:make-page {{Resource}}</code></li>
-  <li>Optional: <code>php artisan filament-file-explorer:make-authorizer</code></li>
-</ol>
-<div>__HONEY_NEXT__</div>
-""",
-    "explorer": f"""
-<p>Full Finder-style surface: sidebar tree, grid/list, toolbar, clipboard, Get Info, context menu.</p>
-<figure class="shot"><img src="../images/explorer-grid.png" loading="lazy" decoding="async" alt="Explorer grid view"><figcaption><span>Grid view</span><span class="tag">MIME</span></figcaption></figure>
-<figure class="shot"><img src="../images/explorer-list.png" loading="lazy" decoding="async" alt="Explorer list view"><figcaption><span>List view</span><span class="tag">Rows</span></figcaption></figure>
-<figure class="shot"><img src="../images/explorer-context-menu.png" loading="lazy" decoding="async" alt="Context menu"><figcaption><span>Context menu</span><span class="tag">Actions</span></figcaption></figure>
-<figure class="shot"><img src="../images/explorer-get-info.png" loading="lazy" decoding="async" alt="Get Info panel"><figcaption><span>Get Info</span><span class="tag">Inspector</span></figcaption></figure>
-{code_panel("blade", '''@livewire('filament-file-explorer::file-explorer', [
-    'model' => $record,
-    'authorizer' => YourAuthorizer::class,
-])''', "php")}
-""",
-    "files-table": """
-<p>Flat Filament table of media in the <code>file-explorer</code> collection — filters, bulk actions, downloads.</p>
-<figure class="shot"><img src="../images/files-table.png" loading="lazy" decoding="async" alt="Files table"><figcaption><span>Files table</span><span class="tag">Filament</span></figcaption></figure>
-""",
-    "form-picker": """
-<p>Modal picker to attach existing media from the explorer into a form field.</p>
-<figure class="shot"><img src="../images/form-picker-modal.svg" alt="Form picker"><figcaption><span>Picker modal</span><span class="tag">Form</span></figcaption></figure>
-""",
-    "authorization": f"""
-<p>Implement <code>FileExplorerAuthorizer</code> (or generate one) to gate browse / upload / rename / delete per owner model.</p>
-{code_panel("Authorizer.php", '''final class QuestionFileExplorerAuthorizer implements FileExplorerAuthorizer
-{{
-    public function canBrowse(Model $owner, ?Authenticatable $user = null): bool
-    {{
-        return $user?->can('view', $owner) ?? false;
-    }}
-    // canUpload, canRename, canDelete, ...
-}}''', "php")}
-""",
-    "configuration": f"""
-<p>Publish config to tune collection name, disk, upload rules, and UI defaults.</p>
-{code_panel("publish", "php artisan vendor:publish --tag=filament-file-explorer-config", "bash")}
-""",
-}
+def shot(src: str, caption: str, tag: str) -> str:
+    return f'''<figure class="shot">
+  <img src="{src}" alt="{caption}" loading="lazy" decoding="async">
+  <figcaption><span>{caption}</span><span class="tag">{tag}</span></figcaption>
+</figure>'''
 
 
-def honey_btn(href: str, label: str) -> str:
+def honey_btn(href: str, label: str, *, rocket: bool = False) -> str:
+    """Rocket animation only when rocket=True (home page)."""
+    if not rocket:
+        return f'''<a class="btn-plain" href="{href}">{label} {CHEVRON}</a>'''
     return f'''<div data-btn-honey class="btn-honey-wrap">
   <a href="{href}" class="btn-honey" aria-label="{label}">
     <div data-horizon-glow aria-hidden="true"></div>
@@ -209,10 +131,209 @@ def plain_btn(href: str, label: str) -> str:
     return f'''<a class="btn-plain" href="{href}">{label} {CHEVRON}</a>'''
 
 
-GUIDE_BODIES["installation"] = GUIDE_BODIES["installation"].replace(
-    "__HONEY_NEXT__",
-    honey_btn("explorer.html", "Next: Explorer"),
-)
+def guide_bodies() -> dict[str, str]:
+    img = "../images"
+    return {
+        "overview": f"""
+<p>Filament File Explorer adds a Finder-style file manager to your Filament panel, backed by Spatie Media Library and scoped per owner record.</p>
+{shot(f'{img}/ui-explorer-grid.png', 'Explorer grid', 'UI')}
+{shot(COVER_URL, 'Package cover', 'Cover')}
+<h2>Surfaces</h2>
+<ul>
+  <li><strong>Explorer page</strong> — sidebar tree, grid/list, toolbar, context menu, Get Info, clipboard</li>
+  <li><strong>Files table</strong> — flat Filament table for power users</li>
+  <li><strong>Form picker</strong> — attach explorer media into forms</li>
+  <li><strong>Authorizer</strong> — gate every action with a small contract</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+  <li>PHP 8.2+</li>
+  <li>Laravel 11–13</li>
+  <li>Filament 4 or 5</li>
+  <li>Spatie Media Library</li>
+</ul>
+""",
+        "installation": f"""
+<p>Install the package, run Media Library migrations, then register the Filament plugin.</p>
+{code_panel("terminal", '''composer require ardavan/filament-file-explorer:"^0.5" -W
+
+php artisan vendor:publish --provider="Spatie\\\\MediaLibrary\\\\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+php artisan filament-file-explorer:install --migrate
+php artisan vendor:publish --tag=filament-file-explorer-assets --force''', "bash")}
+
+<h2>Panel registration</h2>
+{code_panel("AdminPanelProvider.php", '''use Ardavan\\\\FilamentFileExplorer\\\\FilamentFileExplorerPlugin;
+
+public function panel(Panel $panel): Panel
+{{
+    return $panel
+        ->viteTheme('resources/css/filament/admin/theme.css')
+        ->plugin(FilamentFileExplorerPlugin::make());
+}}''', "php")}
+
+<h2>Theme (required)</h2>
+<p>Explorer Blade views use Tailwind utilities. Source the package views and rebuild.</p>
+{code_panel("resources/css/filament/admin/theme.css", '''@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/ardavan/filament-file-explorer/resources/views/**/*.blade.php';''', "css")}
+{code_panel("build", '''npm run build
+php artisan filament:assets''', "bash")}
+
+{shot(COVER_URL, 'Theme + assets ready', 'Cover')}
+
+<h2>Fast path</h2>
+<ol>
+  <li>Model: <code>use HasFileExplorer</code></li>
+  <li><code>php artisan filament-file-explorer:make-folder-migration {{table}}</code> → migrate</li>
+  <li><code>php artisan filament-file-explorer:make-page {{Resource}}</code></li>
+  <li>Optional: <code>php artisan filament-file-explorer:make-authorizer</code></li>
+</ol>
+
+<h2>Stubs</h2>
+<p>Generators use package stubs by default. Publish only when you want to customize output:</p>
+{code_panel("stubs", '''php artisan vendor:publish --tag=filament-file-explorer-stubs
+# or
+php artisan filament-file-explorer:install --stubs''', "bash")}
+""",
+        "explorer": f"""
+<p>Full Finder-style surface: sidebar tree, grid/list, toolbar, clipboard, Get Info, context menu.</p>
+{shot(f'{img}/ui-explorer-grid.png', 'Grid view', 'MIME')}
+{shot(f'{img}/ui-explorer-list.png', 'List view', 'Rows')}
+{shot(f'{img}/ui-toolbar.png', 'Toolbar', 'Chrome')}
+{shot(f'{img}/ui-context-menu.png', 'Context menu', 'Actions')}
+{shot(f'{img}/ui-get-info.png', 'Get Info', 'Inspector')}
+
+<h2>Embed Livewire</h2>
+{code_panel("blade", '''@livewire('filament-file-explorer::file-explorer', [
+    'scopeKey' => $record->fileExplorerScopeKey(),
+    'rootFolderId' => $record->fileExplorerRootFolderId(),
+], key('fe-'.$record->getKey()))''', "php")}
+
+<h2>Resource pages</h2>
+<p>Generate and register pages via the resource concern:</p>
+{code_panel("Resource", '''use Ardavan\\\\FilamentFileExplorer\\\\Resources\\\\Concerns\\\\HasFileExplorerResource;
+
+public static function getPages(): array
+{{
+    return [
+        // ...
+        ...static::getFileExplorerPages(
+            Pages\\\\ManageProjectFiles::class,
+            Pages\\\\ListProjectFiles::class,
+        ),
+    ];
+}}''', "php")}
+{code_panel("CLI", "php artisan filament-file-explorer:make-page ProjectResource", "bash")}
+""",
+        "files-table": f"""
+<p>Flat Filament table of media in the <code>file-explorer</code> collection — filters, bulk actions, downloads.</p>
+{shot(f'{img}/ui-files-table.png', 'Files table', 'Filament')}
+
+<h2>When to use</h2>
+<ul>
+  <li>Operators who prefer rows over icons</li>
+  <li>Bulk download / delete across folders</li>
+  <li>Quick search by filename / MIME</li>
+</ul>
+
+<h2>Generated page</h2>
+<p><code>make-page</code> can emit a list page that uses <code>InteractsWithFileExplorerTable</code>. Implement:</p>
+<ul>
+  <li><code>fileExplorerScopeKey()</code></li>
+  <li><code>fileExplorerRootFolderId()</code></li>
+  <li><code>fileExplorerUrl()</code> (link back to Finder UI)</li>
+</ul>
+""",
+        "form-picker": f"""
+<p>Modal picker to attach existing media from the explorer into a form field.</p>
+{shot(f'{img}/ui-form-picker.png', 'Picker modal', 'Form')}
+
+<h2>Field usage</h2>
+{code_panel("Form", '''use Ardavan\\\\FilamentFileExplorer\\\\Forms\\\\Components\\\\FileExplorerPicker;
+
+FileExplorerPicker::make('attachment_ids')
+    ->scopeKey($record->fileExplorerScopeKey())
+    ->rootFolderId($record->fileExplorerRootFolderId())
+    ->multiple();''', "php")}
+""",
+        "authorization": f"""
+<p>Implement <code>FileExplorerAuthorizer</code> (or generate one) to gate browse / upload / rename / delete per owner model.</p>
+{code_panel("Authorizer.php", '''final class ProjectFileExplorerAuthorizer implements FileExplorerAuthorizer
+{{
+    public function canBrowse(Model $owner, ?Authenticatable $user = null): bool
+    {{
+        return $user?->can('view', $owner) ?? false;
+    }}
+    // canUpload, canRename, canDelete, canMkdir, canMove, canCopy, ...
+}}''', "php")}
+
+<h2>Wire it up</h2>
+{code_panel("plugin", '''->plugin(
+    FilamentFileExplorerPlugin::make()
+        ->authorizer(ProjectFileExplorerAuthorizer::class)
+)''', "php")}
+{code_panel("or config", "'authorizer' => \\\\App\\\\Support\\\\ProjectFileExplorerAuthorizer::class,", "php")}
+{code_panel("CLI", "php artisan filament-file-explorer:make-authorizer ProjectFileExplorerAuthorizer", "bash")}
+
+<p>Default is <code>AllowAllAuthorizer</code> — fine for local demos, not production.</p>
+""",
+        "helpers": f"""
+<p>Helpers keep scope + root folder consistent across explorer, table, and picker.</p>
+
+<h2>HasFileExplorer (model)</h2>
+{code_panel("Model", '''use Ardavan\\\\FilamentFileExplorer\\\\Models\\\\Concerns\\\\HasFileExplorer;
+
+class Project extends Model
+{{
+    use HasFileExplorer;
+}}''', "php")}
+<ul>
+  <li><code>fileExplorerScopeKey()</code> — unique scope string (e.g. <code>project.42</code>)</li>
+  <li><code>fileExplorerRootFolderId()</code> — root folder id for the record</li>
+  <li><code>ensureFileExplorerRoot()</code> — create root folder if missing</li>
+  <li><code>folder()</code> — relation to package <code>Folder</code> model</li>
+</ul>
+
+<h2>Facade</h2>
+{code_panel("Facade", '''use Ardavan\\\\FilamentFileExplorer\\\\Facades\\\\FileExplorer;
+
+FileExplorer::createRoot('Project Files', 'project-files');
+FileExplorer::collection(); // media collection name''', "php")}
+
+<h2>CLI generators</h2>
+{code_panel("CLI", '''php artisan filament-file-explorer:make-folder-migration projects
+php artisan filament-file-explorer:make-page ProjectResource
+php artisan filament-file-explorer:make-authorizer ProjectFileExplorerAuthorizer''', "bash")}
+
+<h2>Open explorer action</h2>
+<p><code>HasFileExplorerResource::openFileExplorerAction()</code> adds a Filament action that jumps to the Finder page for the record.</p>
+
+<h2>Usage checklist</h2>
+<ol>
+  <li>Trait on owner model + folder migration</li>
+  <li>Authorizer bound (plugin or config)</li>
+  <li>Theme <code>@source</code> + assets published</li>
+  <li>Register explorer / list pages on the resource</li>
+  <li>Optional: form picker fields with matching <code>scopeKey</code> / <code>rootFolderId</code></li>
+</ol>
+""",
+        "configuration": f"""
+<p>Publish config to tune collection name, disk, upload rules, and UI defaults.</p>
+{code_panel("publish", "php artisan vendor:publish --tag=filament-file-explorer-config", "bash")}
+
+<h2>Useful keys</h2>
+<ul>
+  <li><code>authorizer</code> — class binding</li>
+  <li><code>collection</code> — media collection (<code>file-explorer</code>)</li>
+  <li><code>auto_create_root</code> — bool</li>
+  <li><code>upload.max_size_kb</code> / <code>allowed_extensions</code> / <code>allowed_mime_types</code></li>
+  <li><code>folders.max_depth</code> / <code>folders.table</code></li>
+  <li><code>routes.prefix</code> / <code>middleware</code></li>
+</ul>
+""",
+    }
 
 
 def nav_link(href: str, label: str, active: bool = False) -> str:
@@ -226,7 +347,8 @@ def nav_link(href: str, label: str, active: bool = False) -> str:
 
 def header(prefix: str, active: str | None = None) -> str:
     home = f"{prefix}index.html" if prefix else "./"
-    docs = f"{prefix}guide/installation.html"
+    # Home → guide/; inside guide SPA → index.html
+    docs = "index.html" if prefix else "guide/"
     features = "#features" if not prefix else f"{prefix}index.html#features"
     return f'''
 <header class="site-header">
@@ -270,13 +392,14 @@ def header(prefix: str, active: str | None = None) -> str:
 
 def footer(prefix: str) -> str:
     home = "./" if not prefix else f"{prefix}"
+    docs = "guide/" if not prefix else "index.html"
     return f'''
 <footer class="site-footer">
   <div class="wrap footer-row">
     <div>MIT © <a href="https://ardavanshamroshan.ir" style="font-weight:700;color:var(--color-stone-800)">Ardavan Shamroshan</a></div>
     <div class="footer-links">
       <a href="{home}">Home</a>
-      <a href="{prefix}guide/installation.html">Docs</a>
+      <a href="{docs}">Docs</a>
       <a href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a>
       <a href="https://filamentphp.com" target="_blank" rel="noopener">Filament</a>
       <a href="https://ardavanshamroshan.ir">ardavanshamroshan.ir</a>
@@ -316,7 +439,6 @@ def author_block(prefix: str) -> str:
 
 
 def minify_css(s: str) -> str:
-    import re
     s = re.sub(r"/\*.*?\*/", "", s, flags=re.S)
     s = re.sub(r"\s+", " ", s)
     s = re.sub(r"\s*([{}:;,>~+])\s*", r"\1", s)
@@ -324,7 +446,6 @@ def minify_css(s: str) -> str:
 
 
 def minify_html(s: str) -> str:
-    import re
     s = re.sub(r">\s+<", "><", s)
     s = re.sub(r"\n\s*", "\n", s)
     return s.strip() + "\n"
@@ -364,26 +485,6 @@ def shell(title: str, description: str, body: str, prefix: str = "", active: str
     return minify_html(html)
 
 
-def sidebar(active: str) -> str:
-    links = "\n".join(
-        f'<a href="{slug}.html" class="{"is-active" if slug == active else ""}">{label}</a>'
-        for slug, label in PAGES
-    )
-    return f'''
-<aside class="docs-side">
-  <h4>Documentation</h4>
-  <nav aria-label="Guide pages">{links}</nav>
-  <h4 style="margin-top:1rem">Resources</h4>
-  <nav>
-    <a href="../">Home</a>
-    <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
-    <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
-    <a href="https://ardavanshamroshan.ir">Author</a>
-  </nav>
-</aside>
-'''
-
-
 def build_index():
     body = f'''
 <main>
@@ -397,7 +498,7 @@ def build_index():
         <h1>Finder-style files for your Filament panel</h1>
         <p class="lead">Sidebar tree, MIME icons, drag-and-drop upload, clipboard, Get Info, and a files table — scoped per record with a clean authorizer contract.</p>
         <div class="hero-actions cta-row">
-          {honey_btn("guide/installation.html", "Get started")}
+          {honey_btn("guide/#installation", "Get started", rocket=True)}
           {ghost_btn("https://github.com/ardavanshamroshan/filament-file-explorer", "View on GitHub")}
         </div>
         <div class="hero-meta">
@@ -408,7 +509,7 @@ def build_index():
         </div>
       </div>
       <div class="hero-art">
-        <img src="images/docs-hero-art.png" alt="Filament File Explorer UI" width="1536" height="1024" fetchpriority="high" decoding="async">
+        <img src="{COVER_URL}" alt="Filament File Explorer cover" width="1536" height="1024" fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
       </div>
     </div>
   </section>
@@ -420,7 +521,7 @@ def build_index():
           <h2>Built for real admin workflows</h2>
           <p>Desktop file manager muscle — Livewire panel manners.</p>
         </div>
-        {plain_btn("guide/explorer.html", "Explorer guide")}
+        {plain_btn("guide/#explorer", "Explorer guide")}
       </div>
       <div class="cards">
         <article class="card"><div class="card-icon">⌘</div><h3>Finder UI</h3><p>Sidebar tree, breadcrumbs, back/forward, responsive toolbar with overflow ⋮ menu.</p></article>
@@ -438,29 +539,37 @@ def build_index():
       <div class="section-head">
         <div>
           <h2>Screenshots</h2>
-          <p>Grid, list, menus, and the files table.</p>
+          <p>Grid, list, toolbar, menus, Get Info, table, picker.</p>
         </div>
       </div>
       <div class="bento">
         <figure class="shot shot-lg">
-          <img src="images/explorer-grid.png" loading="lazy" decoding="async" alt="Grid view">
+          <img src="images/ui-explorer-grid.png" loading="lazy" decoding="async" alt="Grid view">
           <figcaption><span>Grid view</span><span class="tag">Finder</span></figcaption>
         </figure>
         <figure class="shot shot-md">
-          <img src="images/explorer-list.png" loading="lazy" decoding="async" alt="List view">
+          <img src="images/ui-explorer-list.png" loading="lazy" decoding="async" alt="List view">
           <figcaption><span>List view</span><span class="tag">Rows</span></figcaption>
         </figure>
         <figure class="shot shot-md">
-          <img src="images/files-table.png" loading="lazy" decoding="async" alt="Files table">
-          <figcaption><span>Files table</span><span class="tag">Filament</span></figcaption>
+          <img src="images/ui-toolbar.png" loading="lazy" decoding="async" alt="Toolbar">
+          <figcaption><span>Toolbar</span><span class="tag">Chrome</span></figcaption>
         </figure>
         <figure class="shot shot-sm">
-          <img src="images/explorer-context-menu.png" loading="lazy" decoding="async" alt="Context menu">
+          <img src="images/ui-context-menu.png" loading="lazy" decoding="async" alt="Context menu">
           <figcaption><span>Menus</span><span class="tag">Actions</span></figcaption>
         </figure>
         <figure class="shot shot-wide">
-          <img src="images/explorer-get-info.png" loading="lazy" decoding="async" alt="Get Info">
+          <img src="images/ui-get-info.png" loading="lazy" decoding="async" alt="Get Info">
           <figcaption><span>Get Info</span><span class="tag">Inspector</span></figcaption>
+        </figure>
+        <figure class="shot shot-md">
+          <img src="images/ui-files-table.png" loading="lazy" decoding="async" alt="Files table">
+          <figcaption><span>Files table</span><span class="tag">Filament</span></figcaption>
+        </figure>
+        <figure class="shot shot-md">
+          <img src="images/ui-form-picker.png" loading="lazy" decoding="async" alt="Form picker">
+          <figcaption><span>Form picker</span><span class="tag">Modal</span></figcaption>
         </figure>
       </div>
     </div>
@@ -480,10 +589,10 @@ php artisan vendor:publish --tag=filament-file-explorer-assets --force''', "bash
       <div class="cta-band" style="margin-top:1.5rem">
         <div>
           <h2>Ready for your panel?</h2>
-          <p>Full guide covers theme setup, authorizers, and generators.</p>
+          <p>SPA docs: install, explorer, helpers, authorizers — no reload.</p>
         </div>
         <div class="cta-row">
-          {honey_btn("guide/installation.html", "Get started")}
+          {honey_btn("guide/#installation", "Get started", rocket=True)}
           {ghost_btn("https://packagist.org/packages/ardavan/filament-file-explorer", "Packagist")}
         </div>
       </div>
@@ -503,55 +612,96 @@ php artisan vendor:publish --tag=filament-file-explorer-assets --force''', "bash
     )
 
 
-GUIDE_LEADS = {
-    "installation": "Composer, Media Library, theme source, then the plugin.",
-    "explorer": "Full Finder surface: tree, grid/list, toolbar, clipboard, Get Info.",
-    "files-table": "Flat Filament table over the file-explorer media collection.",
-    "form-picker": "Modal picker to attach explorer media into forms.",
-    "authorization": "Gate browse / upload / rename / delete with a small authorizer contract.",
-    "configuration": "Publish config for collection, disk, upload rules, UI defaults.",
-}
+def build_guide_spa():
+    bodies = guide_bodies()
+    titles = {slug: label for slug, label in PAGES}
+    titles_json = json.dumps(titles)
+    leads_json = json.dumps(GUIDE_LEADS)
 
+    nav = "\n".join(
+        f'<a href="#{slug}" data-doc-link="{slug}">{label}</a>'
+        for slug, label in PAGES
+    )
+    panels = "\n".join(
+        f'<section class="doc-panel" data-doc-panel="{slug}" hidden>\n{bodies[slug]}\n</section>'
+        for slug, _ in PAGES
+    )
 
-def build_guides():
-    for slug, label in PAGES:
-        body = f'''
+    body = f'''
 <main>
   <section class="docs-hero">
     <div class="wrap docs-hero-grid">
       <div>
         <div class="eyebrow">
           <img src="../images/logo.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
-          Documentation · {label}
+          Documentation
         </div>
-        <h1>{label}</h1>
-        <p class="lead">{GUIDE_LEADS[slug]}</p>
+        <h1 data-doc-title>Overview</h1>
+        <p class="lead" data-doc-lead>{GUIDE_LEADS["overview"]}</p>
         <div class="hero-actions cta-row">
-          {honey_btn("installation.html" if slug != "installation" else "explorer.html", "Continue" if slug != "installation" else "Next: Explorer")}
           {ghost_btn("https://github.com/ardavanshamroshan/filament-file-explorer", "GitHub")}
         </div>
       </div>
       <div class="hero-art">
-        <img src="../images/docs-hero-art.png" alt="Filament File Explorer UI" width="1536" height="1024" loading="lazy" decoding="async">
+        <img src="{COVER_URL}" alt="Filament File Explorer cover" width="1536" height="1024" loading="lazy" decoding="async" referrerpolicy="no-referrer">
       </div>
     </div>
   </section>
-  <div class="wrap docs-shell">
-    {sidebar(slug)}
+  <div class="wrap docs-shell" data-docs-spa data-titles='{titles_json}' data-leads='{leads_json}'>
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <nav aria-label="Guide pages">{nav}</nav>
+      <h4 style="margin-top:1rem">Resources</h4>
+      <nav>
+        <a href="../">Home</a>
+        <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
+        <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
+        <a href="https://ardavanshamroshan.ir">Author</a>
+      </nav>
+    </aside>
     <article class="docs-main">
-      {GUIDE_BODIES[slug]}
+      {panels}
     </article>
   </div>
 </main>
+{author_block("../")}
 '''
-        html = shell(
-            f"{label} — Filament File Explorer",
-            f"{label} documentation for Filament File Explorer",
-            body + author_block("../"),
-            prefix="../",
-            active="docs",
+    html = shell(
+        "Docs — Filament File Explorer",
+        "Usage guide for Filament File Explorer: install, explorer, helpers, authorization.",
+        body,
+        prefix="../",
+        active="docs",
+    )
+    GUIDE.mkdir(exist_ok=True)
+    (GUIDE / "index.html").write_text(html, encoding="utf-8")
+
+
+def build_redirects():
+    """Old multi-page URLs → SPA hash (keeps bookmarks working)."""
+    for slug, _ in PAGES:
+        (GUIDE / f"{slug}.html").write_text(
+            f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<meta http-equiv="refresh" content="0;url=index.html#{slug}">
+<link rel="canonical" href="index.html#{slug}">
+<script>location.replace("index.html#{slug}");</script>
+</head>
+<body>
+<p><a href="index.html#{slug}">Continue to docs</a></p>
+</body>
+</html>
+''',
+            encoding="utf-8",
         )
-        (GUIDE / f"{slug}.html").write_text(html, encoding="utf-8")
+    # legacy explorer-page name
+    (GUIDE / "explorer-page.html").write_text(
+        '''<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=index.html#explorer"><script>location.replace("index.html#explorer");</script></head><body></body></html>\n''',
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
@@ -560,5 +710,6 @@ if __name__ == "__main__":
     (ROOT / "assets" / "site.min.css").write_text(minify_css(css), encoding="utf-8")
     (ROOT / "assets" / "site.min.js").write_text(js.strip() + "\n", encoding="utf-8")
     build_index()
-    build_guides()
-    print("Built minified docs")
+    build_guide_spa()
+    build_redirects()
+    print("Built home + SPA guide + redirects")

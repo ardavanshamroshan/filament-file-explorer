@@ -439,6 +439,16 @@ p code, li code {
 .docs-main .shot { margin: 1.1rem 0; }
 .docs-main .btn-honey-wrap { margin-top: 0.75rem; display: inline-block; }
 
+/* SPA guide panels */
+.doc-panel[hidden] { display: none !important; }
+.doc-panel.is-active { display: block; animation: docIn .28s ease; }
+@keyframes docIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.docs-side a[data-doc-link] { cursor: pointer; }
+.btn-ghost [data-arrow] { width: 0.85rem; height: auto; }
+
 .site-footer {
   border-top: 1px solid var(--color-bone-100); padding: 2rem 0 3rem; font-size: 0.92rem;
 }

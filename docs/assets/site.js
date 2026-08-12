@@ -1,4 +1,4 @@
-/* Docs: mobile menu + Filament rocket/ghost CTAs */
+/* Docs: mobile menu + Filament CTAs + SPA guide router */
 window.__heroAnimations = window.__heroAnimations || [];
 
 (() => {
@@ -121,8 +121,66 @@ function bootCtas() {
   document.querySelectorAll("[data-btn-ghost]").forEach(bindGhostButton);
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", bootCtas);
-} else {
+/* SPA guide: hash URL, no reload */
+function bootGuideSpa() {
+  const root = document.querySelector("[data-docs-spa]");
+  if (!root) return;
+
+  const panels = [...root.querySelectorAll("[data-doc-panel]")];
+  const links = [...document.querySelectorAll("[data-doc-link]")];
+  const titleEl = document.querySelector("[data-doc-title]");
+  const leadEl = document.querySelector("[data-doc-lead]");
+  const titles = JSON.parse(root.getAttribute("data-titles") || "{}");
+  const leads = JSON.parse(root.getAttribute("data-leads") || "{}");
+  const defaultId = panels[0]?.getAttribute("data-doc-panel") || "installation";
+
+  const show = (id, push) => {
+    const slug = titles[id] ? id : defaultId;
+    panels.forEach((p) => {
+      const on = p.getAttribute("data-doc-panel") === slug;
+      p.hidden = !on;
+      p.classList.toggle("is-active", on);
+    });
+    links.forEach((a) => {
+      a.classList.toggle("is-active", a.getAttribute("data-doc-link") === slug);
+    });
+    if (titleEl) titleEl.textContent = titles[slug] || slug;
+    if (leadEl) leadEl.textContent = leads[slug] || "";
+    document.title = `${titles[slug] || "Docs"} — Filament File Explorer`;
+    const hash = `#${slug}`;
+    if (push && location.hash !== hash) {
+      history.pushState({ slug }, "", hash);
+    } else if (!push && location.hash !== hash) {
+      history.replaceState({ slug }, "", hash);
+    }
+    const main = document.querySelector(".docs-main");
+    if (main) main.scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  links.forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      show(a.getAttribute("data-doc-link"), true);
+    });
+  });
+
+  window.addEventListener("popstate", () => {
+    const id = (location.hash || "").replace(/^#/, "") || defaultId;
+    show(id, false);
+  });
+
+  const initial = (location.hash || "").replace(/^#/, "") || defaultId;
+  show(initial, false);
+}
+
+function boot() {
   bootCtas();
+  bootGuideSpa();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
 }
