@@ -32,4 +32,4 @@ Seeded via `AdminUserSeeder`. Sample projects + files via `FileExplorerDemoSeede
 - Files table sub-page (`ProjectFilesList`)
 - `FileExplorerPicker` on forms (if enabled)
 
-Replace SVG placeholders in `docs/images/` with PNG screenshots from the demo for Packagist / Filament directory submission.
+Screenshots live in `docs/images/` (`explorer-grid.png`, `explorer-list.png`, `explorer-get-info.png`, `explorer-context-menu.png`, `files-table.png`).

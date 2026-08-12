@@ -17,7 +17,7 @@ class ListProjectFiles extends FileExplorerFilesPage
 
 Or use `InteractsWithFileExplorerTable` on a custom page.
 
-![Files table](../images/files-table.svg)
+![Files table](images/files-table.png)
 
 Required hooks (already implemented on `FileExplorerFilesPage` when model uses `HasFileExplorer`):
 

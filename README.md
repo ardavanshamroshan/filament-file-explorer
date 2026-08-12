@@ -2,7 +2,39 @@
 
 Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media Library**.
 
-![Explorer grid view](docs/images/explorer-grid-light.svg)
+![Explorer grid view](docs/images/explorer-grid.png)
+
+## Screenshots
+
+### Grid view
+
+Icons with MIME badges, sidebar tree, and responsive toolbar.
+
+![Explorer grid view](docs/images/explorer-grid.png)
+
+### List / details view
+
+Name, kind, size, and date — with the Get Info inspector open.
+
+![Explorer list view](docs/images/explorer-list.png)
+
+### Get Info
+
+Folder and file metadata in a side inspector.
+
+![Get Info panel](docs/images/explorer-get-info.png)
+
+### Context menu
+
+Right-click empty space or items for new folder, upload, paste, view, and sort.
+
+![Context menu](docs/images/explorer-context-menu.png)
+
+### Files table
+
+Filament table page for searching and managing files across the scoped tree.
+
+![Files table](docs/images/files-table.png)
 
 ## Features
 

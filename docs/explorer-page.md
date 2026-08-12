@@ -19,6 +19,14 @@ Page resolves `scopeKey` + `rootFolderId` from the model trait.
 
 Override methods only when the model does **not** use `HasFileExplorer`.
 
-![Explorer](../images/explorer-grid-light.svg)
+![Explorer](images/explorer-grid.png)
 
 Deep-link folder: `?folder={id}`.
+
+### Views
+
+![List view](images/explorer-list.png)
+
+![Get Info](images/explorer-get-info.png)
+
+![Context menu](images/explorer-context-menu.png)
