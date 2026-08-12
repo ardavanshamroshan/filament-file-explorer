@@ -18,3 +18,4 @@ node_modules/
 
 # Generator output from make-* commands in local testbench apps
 /database/migrations/*_add_folder_id_to_*_table.php
+docs/__pycache__/
