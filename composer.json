@@ -1,0 +1,65 @@
+{
+    "name": "ardavan/filament-file-explorer",
+    "description": "Finder-style file explorer for Filament v4 and v5, powered by Spatie Media Library.",
+    "keywords": [
+        "filament",
+        "filament-plugin",
+        "file-explorer",
+        "file-manager",
+        "spatie",
+        "media-library",
+        "livewire"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ardavan",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^4.0 || ^5.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "livewire/livewire": "^3.0 || ^4.0",
+        "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ardavan\\FilamentFileExplorer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ardavan\\FilamentFileExplorer\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ardavan\\FilamentFileExplorer\\FilamentFileExplorerServiceProvider"
+            ],
+            "aliases": {
+                "FileExplorer": "Ardavan\\FilamentFileExplorer\\Facades\\FileExplorer"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
