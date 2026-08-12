@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filament File Explorer — Finder-style files for Filament</title>
+  <meta name="description" content="Finder-style file explorer plugin for Filament v4 and v5, powered by Spatie Media Library.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Filament File Explorer
+      </a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false">Menu</button>
+      <ul class="nav-links" data-menu>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="guide/installation.html">Docs</a></li>
+        <li><a href="guide/authorization.html">Auth</a></li>
+        <li><a href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">Star on GitHub</a>
+        <a class="btn btn-primary" href="guide/installation.html">Get started</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">Filament v4 · v5 plugin · Spatie Media Library</div>
+          <h1>Finder-style files for your Filament panel</h1>
+          <p class="lead">
+            Sidebar tree, MIME icons, drag-and-drop upload, clipboard, Get Info, and a files table —
+            scoped per record with a clean authorizer contract.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="guide/installation.html">Install the plugin</a>
+            <a class="btn btn-ghost" href="#screenshots">See screenshots</a>
+          </div>
+          <div class="hero-meta">
+            <span><strong>PHP</strong> 8.2+</span>
+            <span><strong>Laravel</strong> 11–13</span>
+            <span><strong>Filament</strong> 4 &amp; 5</span>
+            <span><strong>MIT</strong> license</span>
+          </div>
+        </div>
+        <div class="hero-frame">
+          <span class="hero-glow" aria-hidden="true"></span>
+          <img src="images/explorer-grid.png" alt="File explorer grid view in Filament admin">
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Built for real admin workflows</h2>
+            <p>Everything you expect from a desktop file manager — in Livewire.</p>
+          </div>
+          <a class="btn btn-ghost" href="guide/explorer.html">Explorer guide →</a>
+        </div>
+        <div class="cards">
+          <article class="card"><div class="card-icon">⌘</div><h3>Finder UI</h3><p>Sidebar tree, breadcrumbs, back/forward, responsive toolbar with overflow ⋮ menu.</p></article>
+          <article class="card"><div class="card-icon">↑</div><h3>Upload &amp; MIME</h3><p>Drag-and-drop, typed icons (PDF, Office, zip, audio, video), extensions on labels.</p></article>
+          <article class="card"><div class="card-icon">⎘</div><h3>Clipboard</h3><p>Cut, copy, paste, multi-select, marquee selection, zip download.</p></article>
+          <article class="card"><div class="card-icon">▤</div><h3>Files table</h3><p>Filament table page for search, preview, and management across the scoped tree.</p></article>
+          <article class="card"><div class="card-icon">⬚</div><h3>Form picker</h3><p>Embed the explorer in a modal field and pick attachments without leaving the form.</p></article>
+          <article class="card"><div class="card-icon">⚿</div><h3>Authorizer</h3><p>Generic <code>scopeKey</code> + <code>rootFolderId</code> API with a first-class authorization contract.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="screenshots">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>See it in a Filament panel</h2>
+            <p>Dark-mode ready UI with list, Get Info, and context menus.</p>
+          </div>
+        </div>
+        <div class="gallery">
+          <figure class="shot">
+            <img src="images/explorer-list.png" alt="List view with Get Info panel">
+            <figcaption>List / details view with the Get Info inspector</figcaption>
+          </figure>
+          <div class="shot-stack">
+            <figure class="shot">
+              <img src="images/explorer-get-info.png" alt="Get Info panel">
+              <figcaption>Get Info</figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="images/explorer-context-menu.png" alt="Context menu">
+              <figcaption>Right-click context menu</figcaption>
+            </figure>
+          </div>
+        </div>
+        <figure class="shot" style="margin-top:1rem">
+          <img src="images/files-table.png" alt="Files table page">
+          <figcaption>Files table — Filament resource sub-page</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Install in minutes</h2>
+            <p>Composer + install command + theme <code>@source</code>.</p>
+          </div>
+          <a class="btn btn-primary" href="guide/installation.html">Full installation →</a>
+        </div>
+        <div class="code-panel">
+          <header>Terminal</header>
+          <pre><code>composer require ardavan/filament-file-explorer:"^0.5" -W
+
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+php artisan filament-file-explorer:install --migrate
+php artisan vendor:publish --tag=filament-file-explorer-assets --force</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="cta">
+        <div>
+          <h2>Ready to wire it into a resource?</h2>
+          <p>Generate explorer + files pages from stubs, then bind an authorizer.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="guide/explorer.html">Explorer page</a>
+          <a class="btn btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">View source</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div>MIT © Ardavan Shamroshan · Filament File Explorer</div>
+      <div class="footer-links">
+        <a href="guide/installation.html">Docs</a>
+        <a href="guide/configuration.html">Config</a>
+        <a href="https://github.com/ardavanshamroshan/filament-file-explorer/issues">Issues</a>
+        <a href="https://filamentphp.com">Filament</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const btn = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-menu]');
+    btn?.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>

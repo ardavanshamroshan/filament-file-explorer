@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explorer page — Filament File Explorer</title>
+  <meta name="description" content="Explorer page">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Filament File Explorer
+      </a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false">Menu</button>
+      <ul class="nav-links" data-menu>
+        <li><a href="../#features">Features</a></li>
+        <li><a href="../#screenshots">Screenshots</a></li>
+        <li><a class="is-active" href="installation.html">Docs</a></li>
+        <li><a href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a>
+        <a class="btn btn-primary" href="installation.html">Get started</a>
+      </div>
+    </div>
+  </header>
+  <div class="wrap docs-shell">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a href="installation.html" class="">Installation</a>
+<a href="explorer.html" class="is-active">Explorer page</a>
+<a href="files-table.html" class="">Files table</a>
+<a href="form-picker.html" class="">Form picker</a>
+<a href="authorization.html" class="">Authorization</a>
+<a href="configuration.html" class="">Configuration</a>
+      <h4 style="margin-top:1.25rem">Resources</h4>
+      <a href="../">Home</a>
+      <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
+      <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
+    </aside>
+    <article class="docs-main">
+      
+<h1>Explorer page</h1>
+<p>Prefer <code>HasFileExplorer</code> on the model, then generate a thin page.</p>
+<div class="code-panel"><header>Generate</header>
+<pre><code>php artisan filament-file-explorer:make-page ProjectResource --explorer</code></pre></div>
+<div class="code-panel" style="margin-top:1rem"><header>ManageProjectFiles.php</header>
+<pre><code>use Ardavan\FilamentFileExplorer\Pages\FileExplorerPage;
+
+class ManageProjectFiles extends FileExplorerPage
+{
+    protected static string $resource = ProjectResource::class;
+}</code></pre></div>
+<p>The page resolves <code>scopeKey</code> + <code>rootFolderId</code> from the model trait. Deep-link a folder with <code>?folder={id}</code>.</p>
+<figure class="shot"><img src="../images/explorer-grid.png" alt="Explorer grid"><figcaption>Grid view</figcaption></figure>
+<figure class="shot"><img src="../images/explorer-list.png" alt="Explorer list"><figcaption>List / details + Get Info</figcaption></figure>
+<figure class="shot"><img src="../images/explorer-context-menu.png" alt="Context menu"><figcaption>Context menu</figcaption></figure>
+<p><a class="btn btn-ghost" href="files-table.html">Files table →</a></p>
+
+    </article>
+  </div>
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div>MIT © Ardavan Shamroshan</div>
+      <div class="footer-links">
+        <a href="../">Home</a>
+        <a href="installation.html">Docs</a>
+        <a href="https://github.com/ardavanshamroshan/filament-file-explorer/issues">Issues</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const btn = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-menu]');
+    btn?.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>

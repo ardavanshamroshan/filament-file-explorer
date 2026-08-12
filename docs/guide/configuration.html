@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuration — Filament File Explorer</title>
+  <meta name="description" content="Configuration">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Filament File Explorer
+      </a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false">Menu</button>
+      <ul class="nav-links" data-menu>
+        <li><a href="../#features">Features</a></li>
+        <li><a href="../#screenshots">Screenshots</a></li>
+        <li><a class="is-active" href="installation.html">Docs</a></li>
+        <li><a href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a>
+        <a class="btn btn-primary" href="installation.html">Get started</a>
+      </div>
+    </div>
+  </header>
+  <div class="wrap docs-shell">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a href="installation.html" class="">Installation</a>
+<a href="explorer.html" class="">Explorer page</a>
+<a href="files-table.html" class="">Files table</a>
+<a href="form-picker.html" class="">Form picker</a>
+<a href="authorization.html" class="">Authorization</a>
+<a href="configuration.html" class="is-active">Configuration</a>
+      <h4 style="margin-top:1.25rem">Resources</h4>
+      <a href="../">Home</a>
+      <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
+      <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
+    </aside>
+    <article class="docs-main">
+      
+<h1>Configuration</h1>
+<div class="code-panel"><header>Publish</header>
+<pre><code>php artisan vendor:publish --tag=filament-file-explorer-config</code></pre></div>
+<table>
+  <thead><tr><th>Key</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>authorizer</code></td><td>FQCN implementing <code>FileExplorerAuthorizer</code></td></tr>
+    <tr><td><code>collection</code></td><td>Spatie media collection (default <code>file-explorer</code>)</td></tr>
+    <tr><td><code>upload.max_size_kb</code></td><td>Max upload size</td></tr>
+    <tr><td><code>upload.allowed_extensions</code></td><td>Allowed extensions</td></tr>
+    <tr><td><code>folders.max_depth</code></td><td>Max nested folder depth</td></tr>
+    <tr><td><code>folders.table</code></td><td>Folders table name</td></tr>
+    <tr><td><code>routes.prefix</code></td><td>Media route prefix</td></tr>
+    <tr><td><code>morph_class</code></td><td>Legacy morph map when migrating from another folder package</td></tr>
+  </tbody>
+</table>
+<p>Livewire 4 tip: register both dotted and <code>::</code> component names are shipped — use <code>@livewire('filament-file-explorer::file-explorer', …)</code> or <code>&lt;livewire:filament-file-explorer.file-explorer /&gt;</code>.</p>
+
+    </article>
+  </div>
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div>MIT © Ardavan Shamroshan</div>
+      <div class="footer-links">
+        <a href="../">Home</a>
+        <a href="installation.html">Docs</a>
+        <a href="https://github.com/ardavanshamroshan/filament-file-explorer/issues">Issues</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const btn = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-menu]');
+    btn?.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>

@@ -1,71 +1,79 @@
-# Filament File Explorer
+<p align="center">
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/">
+    <img src="docs/images/explorer-grid.png" alt="Filament File Explorer" width="920">
+  </a>
+</p>
 
-Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media Library**.
+<h1 align="center">Filament File Explorer</h1>
 
-![Explorer grid view](docs/images/explorer-grid.png)
+<p align="center">
+  <strong>Finder-style file manager for Filament v4 &amp; v5</strong><br>
+  Powered by Spatie Media Library · Livewire · Tailwind
+</p>
 
-## Screenshots
+<p align="center">
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/"><img src="https://img.shields.io/badge/docs-github.io-f59e0b?style=for-the-badge&labelColor=1c1917" alt="Documentation"></a>
+  <a href="https://packagist.org/packages/ardavan/filament-file-explorer"><img src="https://img.shields.io/packagist/v/ardavan/filament-file-explorer?style=for-the-badge&labelColor=1c1917&color=0d9488" alt="Packagist"></a>
+  <a href="https://packagist.org/packages/ardavan/filament-file-explorer"><img src="https://img.shields.io/packagist/dt/ardavan/filament-file-explorer?style=for-the-badge&labelColor=1c1917&color=78716c" alt="Downloads"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-stone?style=for-the-badge&labelColor=1c1917" alt="MIT"></a>
+</p>
 
-### Grid view
+<p align="center">
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/">Documentation</a> ·
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/guide/installation.html">Installation</a> ·
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/guide/explorer.html">Explorer</a> ·
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/#screenshots">Screenshots</a> ·
+  <a href="https://github.com/ardavanshamroshan/filament-file-explorer/issues">Issues</a>
+</p>
 
-Icons with MIME badges, sidebar tree, and responsive toolbar.
+---
 
-![Explorer grid view](docs/images/explorer-grid.png)
+## Navigation
 
-### List / details view
+| | |
+|---|---|
+| **Product** | [Features](#features) · [Screenshots](#screenshots) · [Requirements](#requirements) |
+| **Start** | [Installation](#installation) · [Quickstart](#quickstart) · [Commands](#commands) |
+| **Guides** | [Explorer](https://ardavanshamroshan.github.io/filament-file-explorer/guide/explorer.html) · [Files table](https://ardavanshamroshan.github.io/filament-file-explorer/guide/files-table.html) · [Form picker](https://ardavanshamroshan.github.io/filament-file-explorer/guide/form-picker.html) · [Authorization](https://ardavanshamroshan.github.io/filament-file-explorer/guide/authorization.html) · [Configuration](https://ardavanshamroshan.github.io/filament-file-explorer/guide/configuration.html) |
+| **Site** | [🌐 Documentation website](https://ardavanshamroshan.github.io/filament-file-explorer/) · [Packagist](https://packagist.org/packages/ardavan/filament-file-explorer) |
 
-Name, kind, size, and date — with the Get Info inspector open.
-
-![Explorer list view](docs/images/explorer-list.png)
-
-### Get Info
-
-Folder and file metadata in a side inspector.
-
-![Get Info panel](docs/images/explorer-get-info.png)
-
-### Context menu
-
-Right-click empty space or items for new folder, upload, paste, view, and sort.
-
-![Context menu](docs/images/explorer-context-menu.png)
-
-### Files table
-
-Filament table page for searching and managing files across the scoped tree.
-
-![Files table](docs/images/files-table.png)
+---
 
 ## Features
 
-- macOS Finder-style UI: sidebar tree, breadcrumbs, back/forward navigation
-- View modes: icons (grid), list, columns (table), details
-- Clipboard: cut, copy, paste folders and files
-- Multi-select with marquee selection
-- Context menu, drag-and-drop upload, folder zip download
-- Responsive toolbar — overflow actions collapse into a **⋮** menu on narrow widths
-- MIME icons for PDF, Office, zip, audio, video (+ generic file)
-- File labels always show the extension (e.g. `readme.txt`)
-- Dark-mode readable file names
-- Uploads stored in the configured Spatie collection (`file-explorer` by default)
-- **Filament plugin** with auto-loaded CSS/JS assets
-- **`HasFileExplorer` model trait** — auto root folder + scope key
-- Thin **resource page stubs** — generate only what you need; publish stubs only to customize
-- Reusable **files table** page
-- **Form picker** field to browse files in modals
-- Generic **`scopeKey` + `rootFolderId`** API — no domain coupling
-- Authorization via **`FileExplorerAuthorizer`** contract
-- Translations: en, fa, ar, de, nl, fr, es, pt, tr, ru, zh_CN, ja, it, hi, id
+- **Finder UI** — sidebar tree, breadcrumbs, back / forward, responsive toolbar with **⋮** overflow
+- **Views** — icons (grid), list, table, details + Get Info inspector
+- **Files** — MIME icons (PDF, Office, zip, audio, video), extensions on labels, dark-mode contrast
+- **Ops** — drag-and-drop upload, clipboard (cut / copy / paste), marquee multi-select, zip download
+- **Filament** — plugin assets, `HasFileExplorer` trait, stub generators, files table page, form picker
+- **API** — generic `scopeKey` + `rootFolderId`, `FileExplorerAuthorizer` contract
+- **i18n** — en, fa, ar, de, nl, fr, es, pt, tr, ru, zh_CN, ja, it, hi, id
+
+---
+
+## Screenshots
+
+| Grid | List + Get Info |
+|------|-----------------|
+| ![Grid](docs/images/explorer-grid.png) | ![List](docs/images/explorer-list.png) |
+
+| Context menu | Files table |
+|--------------|-------------|
+| ![Context](docs/images/explorer-context-menu.png) | ![Table](docs/images/files-table.png) |
+
+---
 
 ## Requirements
 
 | Package | Version |
 |---------|---------|
 | PHP | 8.2+ |
-| Laravel | 11, 12, or 13 |
+| Laravel | 11 / 12 / 13 |
 | Filament | 4.x or 5.x |
 | Livewire | 3.x (Filament 4) or 4.x (Filament 5) |
 | Spatie Media Library | 11.x |
+
+---
 
 ## Installation
 
@@ -74,9 +82,10 @@ composer require ardavan/filament-file-explorer:"^0.5" -W
 
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 php artisan filament-file-explorer:install --migrate
+php artisan vendor:publish --tag=filament-file-explorer-assets --force
 ```
 
-Register the plugin in your panel provider:
+Register the plugin:
 
 ```php
 use Ardavan\FilamentFileExplorer\FilamentFileExplorerPlugin;
@@ -91,8 +100,6 @@ public function panel(Panel $panel): Panel
 
 ### Theme (required)
 
-Add package views to your Filament theme so Tailwind utilities compile:
-
 ```css
 /* resources/css/filament/admin/theme.css */
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
@@ -105,14 +112,13 @@ Add package views to your Filament theme so Tailwind utilities compile:
 ```bash
 npm run build
 php artisan filament:assets
-php artisan vendor:publish --tag=filament-file-explorer-assets --force
 ```
 
-After upgrading the package, republish assets and rebuild the Filament theme so CSS/JS and MIME icons stay in sync.
+> Full walkthrough: **[Installation guide →](https://ardavanshamroshan.github.io/filament-file-explorer/guide/installation.html)**
 
-## Fast usage
+---
 
-### 1. Model trait
+## Quickstart
 
 ```php
 use Ardavan\FilamentFileExplorer\Models\Concerns\HasFileExplorer;
@@ -123,29 +129,11 @@ class Project extends Model
 }
 ```
 
-Add `folder_id`:
-
 ```bash
 php artisan filament-file-explorer:make-folder-migration projects
 php artisan migrate
-```
-
-Root folder auto-creates on model `creating` when `folder_id` is empty.
-
-### 2. Generate resource pages (from stubs)
-
-```bash
 php artisan filament-file-explorer:make-page ProjectResource
 ```
-
-Creates thin pages that extend package bases. **Do not publish stubs** unless you want to change generated templates:
-
-```bash
-# optional — customize generators only
-php artisan vendor:publish --tag=filament-file-explorer-stubs
-```
-
-Register pages:
 
 ```php
 use Ardavan\FilamentFileExplorer\Resources\Concerns\HasFileExplorerResource;
@@ -169,46 +157,29 @@ class ProjectResource extends Resource
 }
 ```
 
-Generated explorer page:
+Embed Livewire (Filament 5 / Livewire 4):
 
-```php
-class ManageProjectFiles extends FileExplorerPage
-{
-    protected static string $resource = ProjectResource::class;
-}
+```blade
+@livewire('filament-file-explorer::file-explorer', [
+    'scopeKey' => 'project.'.$record->getKey(),
+    'rootFolderId' => $record->folder_id,
+], key('fe-'.$record->getKey()))
 ```
 
-### 3. Authorizer (optional)
+Or the dotted tag form: `<livewire:filament-file-explorer.file-explorer … />`.
 
-```bash
-php artisan filament-file-explorer:make-authorizer
-```
-
-Bind in `AppServiceProvider` or config.
+---
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `filament-file-explorer:install` | Publish config (`--stubs`, `--migrate`) |
-| `filament-file-explorer:make-page {Resource}` | Generate explorer + files list pages |
-| `filament-file-explorer:make-folder-migration {table}` | Add `folder_id` FK |
-| `filament-file-explorer:make-authorizer` | Generate authorizer class |
+| `filament-file-explorer:make-page {Resource}` | Explorer + files list pages |
+| `filament-file-explorer:make-folder-migration {table}` | Add `folder_id` |
+| `filament-file-explorer:make-authorizer` | Authorizer class |
 
-## Demo app
-
-Local Filament v5 demo (path repo install):
-
-```bash
-# from a Laravel app with path repo ../filament-file-explorer
-composer require ardavan/filament-file-explorer:@dev
-php artisan filament-file-explorer:install --migrate
-php artisan db:seed
-```
-
-Login: `admin@example.com` / `password`
-
-See also [demo/README.md](demo/README.md) for the in-package QA notes.
+---
 
 ## Form picker
 
@@ -221,14 +192,27 @@ FileExplorerPicker::make('attachment_ids')
     ->multiple();
 ```
 
-## Documentation
+---
 
-- [Installation](docs/installation.md)
-- [Authorization](docs/authorization.md)
-- [Explorer page](docs/explorer-page.md)
-- [Files table](docs/files-table.md)
-- [Form picker](docs/form-picker.md)
-- [Configuration](docs/configuration.md)
+## Documentation website
+
+Designed in the spirit of [filamentphp.com](https://filamentphp.com) — amber CTAs, bone surfaces, screenshot gallery, and guide nav.
+
+**→ [ardavanshamroshan.github.io/filament-file-explorer](https://ardavanshamroshan.github.io/filament-file-explorer/)**
+
+Markdown mirrors (repo): [installation](docs/installation.md) · [explorer](docs/explorer-page.md) · [files table](docs/files-table.md) · [picker](docs/form-picker.md) · [auth](docs/authorization.md) · [config](docs/configuration.md)
+
+---
+
+## Translations
+
+`en` · `fa` · `ar` · `de` · `nl` · `fr` · `es` · `pt` · `tr` · `ru` · `zh_CN` · `ja` · `it` · `hi` · `id`
+
+```bash
+php artisan vendor:publish --tag=filament-file-explorer-translations
+```
+
+---
 
 ## Development
 
@@ -238,23 +222,7 @@ composer install
 ./vendor/bin/pint
 ```
 
-Graphify output (`graphify-out/`) is gitignored — run locally:
-
-```bash
-graphify update .
-```
-
-## Translations
-
-Shipped locales: **en**, **fa**, **ar**, **de**, **nl**, **fr**, **es**, **pt**, **tr**, **ru**, **zh_CN**, **ja**, **it**, **hi**, **id**.
-
-Set your app locale (`config/app.php` or Filament panel locale). All UI strings use `filament-file-explorer::file-explorer.*`.
-
-Publish to customize:
-
-```bash
-php artisan vendor:publish --tag=filament-file-explorer-translations
-```
+---
 
 ## License
 

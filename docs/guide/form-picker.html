@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form picker — Filament File Explorer</title>
+  <meta name="description" content="Form picker">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Filament File Explorer
+      </a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false">Menu</button>
+      <ul class="nav-links" data-menu>
+        <li><a href="../#features">Features</a></li>
+        <li><a href="../#screenshots">Screenshots</a></li>
+        <li><a class="is-active" href="installation.html">Docs</a></li>
+        <li><a href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">GitHub</a>
+        <a class="btn btn-primary" href="installation.html">Get started</a>
+      </div>
+    </div>
+  </header>
+  <div class="wrap docs-shell">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a href="installation.html" class="">Installation</a>
+<a href="explorer.html" class="">Explorer page</a>
+<a href="files-table.html" class="">Files table</a>
+<a href="form-picker.html" class="is-active">Form picker</a>
+<a href="authorization.html" class="">Authorization</a>
+<a href="configuration.html" class="">Configuration</a>
+      <h4 style="margin-top:1.25rem">Resources</h4>
+      <a href="../">Home</a>
+      <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
+      <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
+    </aside>
+    <article class="docs-main">
+      
+<h1>Form picker</h1>
+<p><code>FileExplorerPicker</code> opens a modal with the embedded explorer.</p>
+<div class="code-panel"><header>Form schema</header>
+<pre><code>use Ardavan\FilamentFileExplorer\Forms\Components\FileExplorerPicker;
+
+FileExplorerPicker::make('attachment_ids')
+    ->scopeKey($record->fileExplorerScopeKey())
+    ->rootFolderId($record->fileExplorerRootFolderId())
+    ->multiple()
+    ->label('Attachments');</code></pre></div>
+
+    </article>
+  </div>
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div>MIT © Ardavan Shamroshan</div>
+      <div class="footer-links">
+        <a href="../">Home</a>
+        <a href="installation.html">Docs</a>
+        <a href="https://github.com/ardavanshamroshan/filament-file-explorer/issues">Issues</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const btn = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-menu]');
+    btn?.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>
