@@ -415,7 +415,7 @@ p code, li code {
 .docs-main th, .docs-main td { border: 1px solid var(--color-bone-100); padding: 0.6rem 0.7rem; text-align: left; }
 .docs-main th { background: var(--color-cream-100); }
 .docs-main .shot { margin: 1.1rem 0; }
-.docs-main .btn-honey-wrap { margin-top: 0.75rem; display: inline-block; }
+.docs-main .btn-honey { margin-top: 0.75rem; }
 
 .site-footer {
   border-top: 1px solid var(--color-bone-100); padding: 2rem 0 3rem; font-size: 0.92rem;
