@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#18181b"/>
+  <rect x="40" y="40" width="200" height="640" rx="12" fill="#27272a" stroke="#3f3f46"/>
+  <rect x="260" y="40" width="980" height="640" rx="12" fill="#09090b" stroke="#3f3f46"/>
+  <text x="280" y="90" fill="#fafafa" font-family="system-ui" font-size="22" font-weight="600">File Explorer  Dark Mode</text>
+  <rect x="300" y="130" width="90" height="100" rx="8" fill="#422006" stroke="#ca8a04"/>
+  <rect x="410" y="130" width="90" height="100" rx="8" fill="#083344" stroke="#0891b2"/>
+</svg>

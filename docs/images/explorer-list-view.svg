@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#fafafa"/>
+  <rect x="40" y="40" width="1180" height="640" rx="12" fill="#fff" stroke="#e4e4e7"/>
+  <text x="60" y="90" fill="#18181b" font-family="system-ui" font-size="22" font-weight="600">List View</text>
+  <line x1="60" y1="120" x2="1200" y2="120" stroke="#e4e4e7"/>
+  <text x="80" y="160" fill="#52525b" font-family="system-ui" font-size="14">Name</text>
+  <text x="500" y="160" fill="#52525b" font-family="system-ui" font-size="14">Size</text>
+  <text x="700" y="160" fill="#52525b" font-family="system-ui" font-size="14">Type</text>
+  <text x="80" y="200" fill="#18181b" font-family="system-ui" font-size="14">contract.pdf</text>
+  <text x="500" y="200" fill="#71717a" font-family="system-ui" font-size="14">2.4 MB</text>
+  <text x="700" y="200" fill="#71717a" font-family="system-ui" font-size="14">PDF</text>
+</svg>

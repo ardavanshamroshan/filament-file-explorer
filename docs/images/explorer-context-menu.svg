@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="360" viewBox="0 0 400 360">
+  <rect width="400" height="360" rx="12" fill="#fff" stroke="#e4e4e7"/>
+  <rect x="12" y="12" width="376" height="36" rx="6" fill="#f4f4f5"/>
+  <text x="24" y="36" fill="#18181b" font-family="system-ui" font-size="13">New Folder</text>
+  <text x="24" y="72" fill="#18181b" font-family="system-ui" font-size="13">Upload Files</text>
+  <text x="24" y="108" fill="#18181b" font-family="system-ui" font-size="13">Copy</text>
+  <text x="24" y="144" fill="#18181b" font-family="system-ui" font-size="13">Download</text>
+  <text x="24" y="180" fill="#dc2626" font-family="system-ui" font-size="13">Delete</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#fafafa"/>
+  <rect x="40" y="40" width="200" height="640" rx="12" fill="#f4f4f5" stroke="#e4e4e7"/>
+  <text x="60" y="80" fill="#71717a" font-family="system-ui" font-size="14">EXPLORER</text>
+  <rect x="260" y="40" width="980" height="640" rx="12" fill="#fff" stroke="#e4e4e7"/>
+  <text x="280" y="90" fill="#18181b" font-family="system-ui" font-size="22" font-weight="600">File Explorer  Grid View</text>
+  <rect x="300" y="130" width="90" height="100" rx="8" fill="#fef3c7" stroke="#fcd34d"/>
+  <rect x="410" y="130" width="90" height="100" rx="8" fill="#fef3c7" stroke="#fcd34d"/>
+  <rect x="520" y="130" width="90" height="100" rx="8" fill="#e0f2fe" stroke="#7dd3fc"/>
+  <text x="300" y="250" fill="#52525b" font-size="12" font-family="system-ui">Documents</text>
+  <text x="410" y="250" fill="#52525b" font-size="12" font-family="system-ui">Images</text>
+  <text x="520" y="250" fill="#52525b" font-size="12" font-family="system-ui">report.pdf</text>
+</svg>

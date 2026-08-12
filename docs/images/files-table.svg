@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#fafafa"/>
+  <rect x="40" y="40" width="1180" height="640" rx="12" fill="#fff" stroke="#e4e4e7"/>
+  <text x="60" y="90" fill="#18181b" font-family="system-ui" font-size="22" font-weight="600">Files Table</text>
+  <rect x="60" y="120" width="1140" height="40" fill="#f4f4f5"/>
+  <text x="80" y="146" fill="#52525b" font-family="system-ui" font-size="13">Preview</text>
+  <text x="180" y="146" fill="#52525b" font-family="system-ui" font-size="13">File name</text>
+  <text x="600" y="146" fill="#52525b" font-family="system-ui" font-size="13">Size</text>
+  <text x="750" y="146" fill="#52525b" font-family="system-ui" font-size="13">Type</text>
+  <circle cx="100" cy="190" r="16" fill="#dbeafe"/>
+  <text x="180" y="195" fill="#18181b" font-family="system-ui" font-size="14">invoice.pdf</text>
+  <text x="600" y="195" fill="#71717a" font-family="system-ui" font-size="14">1.2 MB</text>
+  <text x="750" y="195" fill="#71717a" font-family="system-ui" font-size="14">PDF</text>
+</svg>
