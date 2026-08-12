@@ -8,6 +8,8 @@ namespace Ardavan\FilamentFileExplorer\Livewire;
 use Ardavan\FilamentFileExplorer\Support\FolderTree;
 use Ardavan\FilamentFileExplorer\Contracts\FileExplorerAuthorizer;
 
+use Ardavan\FilamentFileExplorer\Support\MediaLabel;
+use Ardavan\FilamentFileExplorer\Support\MimeIcon;
 use Ardavan\FilamentFileExplorer\Support\UploadRules;
 use Filament\Notifications\Notification;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -61,7 +63,7 @@ class FileExplorer extends \Livewire\Component
 
     public string $renameValue = '';
 
-    /** @var array{type:?string,id:?int,name:?string,size:?string,path:?string,mime:?string,permissions:?string,created:?string,updated:?string,extra:?string,preview:?string}|null */
+    /** @var array{type:?string,id:?int,name:?string,size:?string,path:?string,mime:?string,permissions:?string,created:?string,updated:?string,extra:?string,preview:?string,icon?:string}|null */
     public ?array $infoItem = null;
 
     public bool $showInfoModal = false;
@@ -177,13 +179,13 @@ class FileExplorer extends \Livewire\Component
                 'max:'.UploadRules::maxSizeKb(),
                 function (string $attribute, mixed $value, \Closure $fail): void {
                     if (! $value instanceof \Illuminate\Http\UploadedFile) {
-                        $fail('فایل نامعتبر است.');
+                        $fail(__('filament-file-explorer::file-explorer.validation.invalid_file'));
 
                         return;
                     }
 
                     if (! UploadRules::isAllowedUpload($value)) {
-                        $fail('فرمت فایل مجاز نیست.');
+                        $fail(__('filament-file-explorer::file-explorer.validation.invalid_format'));
                     }
                 },
             ],
@@ -193,8 +195,8 @@ class FileExplorer extends \Livewire\Component
     protected function messages(): array
     {
         return [
-            'files.*.file' => 'فایل نامعتبر است.',
-            'files.*.max' => 'حجم فایل بیش از حد مجاز است (حداکثر ۵۰ مگابایت).',
+            'files.*.file' => __('filament-file-explorer::file-explorer.validation.invalid_file'),
+            'files.*.max' => __('filament-file-explorer::file-explorer.validation.file_too_large', ['max' => UploadRules::maxSizeKb()]),
         ];
     }
 
@@ -340,6 +342,12 @@ class FileExplorer extends \Livewire\Component
         $this->selectedFiles = array_values(array_map('intval', (array) $files));
     }
 
+    public function clearSelection(): void
+    {
+        $this->selectedFolders = [];
+        $this->selectedFiles = [];
+    }
+
     public function hasClipboard(): bool
     {
         $clip = session($this->clipboardKey());
@@ -359,14 +367,14 @@ class FileExplorer extends \Livewire\Component
     {
         abort_unless($this->ability('copy'), 403);
         $this->writeClipboard('copy', $folderId, $fileId);
-        Notification::make()->success()->title('کپی شد')->send();
+        Notification::make()->success()->title(__('filament-file-explorer::file-explorer.copied'))->send();
     }
 
     public function cutSelection(?int $folderId = null, ?int $fileId = null): void
     {
         abort_unless($this->ability('move'), 403);
         $this->writeClipboard('cut', $folderId, $fileId);
-        Notification::make()->success()->title('برش شد')->send();
+        Notification::make()->success()->title(__('filament-file-explorer::file-explorer.cut'))->send();
     }
 
     protected function writeClipboard(string $mode, ?int $folderId, ?int $fileId): void
@@ -410,7 +418,7 @@ class FileExplorer extends \Livewire\Component
             $this->moveItemsToFolder($this->currentFolder->id, $folderIds, $fileIds);
             session()->forget($this->clipboardKey());
             $this->clipboardReady = false;
-            Notification::make()->success()->title('جای‌گذاری شد')->send();
+            Notification::make()->success()->title(__('filament-file-explorer::file-explorer.pasted'))->send();
 
             return;
         }
@@ -440,7 +448,7 @@ class FileExplorer extends \Livewire\Component
 
         $this->currentFolder = $this->currentFolder->fresh(['children']);
         $this->loadFolders();
-        Notification::make()->success()->title('جای‌گذاری شد')->send();
+        Notification::make()->success()->title(__('filament-file-explorer::file-explorer.pasted'))->send();
     }
 
     protected function duplicateMedia(Media $media, Folder $target): void
@@ -461,7 +469,7 @@ class FileExplorer extends \Livewire\Component
                 'uploaded_by_type' => $actor ? $actor::class : null,
                 'uploaded_by_id'   => $actor?->getAuthIdentifier(),
             ]))
-            ->toMediaCollection();
+            ->toMediaCollection(UploadRules::collection());
     }
 
     protected function copyFolderRecursive(Folder $source, Folder $parent): Folder
@@ -482,7 +490,7 @@ class FileExplorer extends \Livewire\Component
         $folder->parent_id = $parent->id;
         $folder->save();
 
-        foreach ($source->getMedia() as $media) {
+        foreach ($source->getMedia(UploadRules::collection()) as $media) {
             $this->duplicateMedia($media, $folder);
         }
 
@@ -499,7 +507,7 @@ class FileExplorer extends \Livewire\Component
 
         if ($type === 'folder' && $id) {
             if ((int) $id === $this->rootFolderId) {
-                Notification::make()->warning()->title('پوشه ریشه قابل تغییر نام نیست')->send();
+                Notification::make()->warning()->title(__('filament-file-explorer::file-explorer.root_not_renamable'))->send();
 
                 return;
             }
@@ -567,7 +575,7 @@ class FileExplorer extends \Livewire\Component
                 ->where('id', '!=', $folder->id)
                 ->exists();
             if ($exists) {
-                Notification::make()->danger()->title('پوشه هم‌نام وجود دارد')->send();
+                Notification::make()->danger()->title(__('filament-file-explorer::file-explorer.duplicate_folder'))->send();
 
                 return;
             }
@@ -690,7 +698,7 @@ class FileExplorer extends \Livewire\Component
             $folder = Folder::query()->findOrFail($id);
             $this->assertUnderRoot($folder);
             $size = $this->folderSizeBytes($folder);
-            $items = (int) $folder->children()->count() + $folder->getMedia()->count();
+            $items = (int) $folder->children()->count() + $folder->getMedia(UploadRules::collection())->count();
             $this->infoItem = [
                 'type'        => 'folder',
                 'id'          => $folder->id,
@@ -719,7 +727,7 @@ class FileExplorer extends \Livewire\Component
             $this->infoItem = [
                 'type'        => 'file',
                 'id'          => $media->id,
-                'name'        => $media->name ?: $media->file_name,
+                'name'        => MediaLabel::display($media),
                 'size'        => $this->formatBytes((int) $media->size),
                 'path'        => ($folder ? $this->folderPathString($folder).' / ' : '').$media->file_name,
                 'mime'        => $media->mime_type ?: '—',
@@ -727,6 +735,7 @@ class FileExplorer extends \Livewire\Component
                 'created'     => $media->created_at?->format('Y/m/d H:i'),
                 'updated'     => $media->updated_at?->format('Y/m/d H:i'),
                 'extra'       => $media->file_name,
+                'icon'        => MimeIcon::forMedia($media),
                 'preview'     => str_starts_with((string) $media->mime_type, 'image/')
                     ? $this->mediaOpenUrl($media->id)
                     : null,
@@ -741,7 +750,7 @@ class FileExplorer extends \Livewire\Component
         $folder = $this->currentFolder;
         $this->assertUnderRoot($folder);
         $size = $this->folderSizeBytes($folder);
-        $items = (int) $folder->children()->count() + $folder->getMedia()->count();
+        $items = (int) $folder->children()->count() + $folder->getMedia(UploadRules::collection())->count();
         $this->infoItem = [
             'type'        => 'folder',
             'id'          => $folder->id,
@@ -804,7 +813,7 @@ class FileExplorer extends \Livewire\Component
     protected function folderSizeBytes(Folder $folder): int
     {
         $total = 0;
-        foreach ($folder->getMedia() as $media) {
+        foreach ($folder->getMedia(UploadRules::collection()) as $media) {
             $total += (int) $media->size;
         }
         foreach ($folder->children as $child) {
@@ -835,28 +844,28 @@ class FileExplorer extends \Livewire\Component
 
         if ($state['allowed']) {
             if ($state['remaining_seconds'] !== null) {
-                return 'قابل حذف · '.$state['reason'];
+                return __('filament-file-explorer::file-explorer.permissions.deletable_with_reason', ['reason' => $state['reason']]);
             }
 
-            return 'Read / Write / Delete';
+            return __('filament-file-explorer::file-explorer.permissions.read_write_delete');
         }
 
-        return 'Read / Write · '.($state['reason'] ?? 'حذف مجاز نیست');
+        return __('filament-file-explorer::file-explorer.permissions.read_write').' · '.($state['reason'] ?? __('filament-file-explorer::file-explorer.delete_not_allowed'));
     }
 
     protected function folderPermissionLabel(Folder $folder): string
     {
         if ((int) $folder->id === $this->rootFolderId) {
-            return 'Read / Write (root — delete locked)';
+            return __('filament-file-explorer::file-explorer.permissions.read_write_root_locked');
         }
 
         $state = app(FileExplorerAuthorizer::class)->folderDeleteState($this->scopeKey, $folder);
 
         if ($state['allowed']) {
-            return 'Read / Write / Delete';
+            return __('filament-file-explorer::file-explorer.permissions.read_write_delete');
         }
 
-        return 'Read / Write · '.($state['reason'] ?? 'حذف پوشه مجاز نیست');
+        return __('filament-file-explorer::file-explorer.permissions.read_write').' · '.($state['reason'] ?? __('filament-file-explorer::file-explorer.permissions.folder_delete_denied'));
     }
 
     protected function folderDeleteNote(Folder $folder): ?string
@@ -891,8 +900,8 @@ class FileExplorer extends \Livewire\Component
 
             $state = $docs->mediaDeleteState($this->scopeKey, $media);
             $state['hint'] = $state['allowed']
-                ? (string) ($state['reason'] ?? 'قابل حذف')
-                : (string) ($state['reason'] ?? 'حذف مجاز نیست');
+                ? (string) ($state['reason'] ?? __('filament-file-explorer::file-explorer.permissions.deletable'))
+                : (string) ($state['reason'] ?? __('filament-file-explorer::file-explorer.delete_not_allowed'));
 
             return $state;
         }
@@ -902,8 +911,8 @@ class FileExplorer extends \Livewire\Component
             $this->assertUnderRoot($folder);
             $state = $docs->folderDeleteState($this->scopeKey, $folder);
             $state['hint'] = $state['allowed']
-                ? 'قابل حذف'
-                : (string) ($state['reason'] ?? 'حذف پوشه مجاز نیست');
+                ? __('filament-file-explorer::file-explorer.permissions.deletable')
+                : (string) ($state['reason'] ?? __('filament-file-explorer::file-explorer.permissions.folder_delete_denied'));
 
             return $state;
         }
@@ -911,10 +920,10 @@ class FileExplorer extends \Livewire\Component
         return [
             'allowed'           => false,
             'reason_code'       => 'unknown',
-            'reason'            => 'موردی انتخاب نشده است.',
+            'reason'            => __('filament-file-explorer::file-explorer.nothing_selected'),
             'remaining_seconds' => null,
             'window_seconds'    => 0,
-            'hint'              => 'موردی انتخاب نشده است.',
+            'hint'              => __('filament-file-explorer::file-explorer.nothing_selected'),
         ];
     }
 
@@ -922,7 +931,7 @@ class FileExplorer extends \Livewire\Component
     {
         $withCounts = [
             'children',
-            'media as file_explorer_count' => fn ($q) => $q->where('collection_name', ),
+            'media as file_explorer_count' => fn ($q) => $q->where('collection_name', UploadRules::collection()),
         ];
 
         if ($this->search != '') {
@@ -936,7 +945,7 @@ class FileExplorer extends \Livewire\Component
                 ->get();
 
             $this->searchedFiles = Media::query()
-                ->where('collection_name', )
+                ->where('collection_name', UploadRules::collection())
                 ->where('model_type', Folder::class)
                 ->whereIn('model_id', $rootIds)
                 ->where('name', 'like', '%'.$this->search.'%')
@@ -1004,7 +1013,7 @@ class FileExplorer extends \Livewire\Component
         $this->assertUnderRoot($this->currentFolder);
 
         $this->isCreatingNewFolder = true;
-        $this->newFolderName = __('filament-file-explorer.file-explorer.folder_without_title');
+        $this->newFolderName = __('filament-file-explorer::file-explorer.folder_without_title');
         $this->dispatch('new-folder-created');
     }
 
@@ -1044,14 +1053,14 @@ class FileExplorer extends \Livewire\Component
                         ->first();
 
                     if ($existingFolder) {
-                        $fail(__('filament-file-explorer.file-explorer.folder_already_exists'));
+                        $fail(__('filament-file-explorer::file-explorer.folder_already_exists'));
                     }
 
                     $maxDepth = config('filament-file-explorer.folders.max_depth');
 
                     if ($maxDepth !== null && $this->currentFolder) {
                         if ($this->currentFolder->getDepth() >= $maxDepth - 1) {
-                            $fail(__('filament-file-explorer.file-explorer.validation.max_folder_depth_exceeded', ['max' => $maxDepth]));
+                            $fail(__('filament-file-explorer::file-explorer.validation.max_folder_depth_exceeded', ['max' => $maxDepth]));
                         }
                     }
                 },
@@ -1175,8 +1184,8 @@ class FileExplorer extends \Livewire\Component
 
             Notification::make()
                 ->danger()
-                ->title('آپلود نامعتبر')
-                ->body(collect($e->validator->errors()->all())->first() ?: 'فایل مجاز نیست')
+                ->title(__('filament-file-explorer::file-explorer.upload_invalid'))
+                ->body(collect($e->validator->errors()->all())->first() ?: __('filament-file-explorer::file-explorer.validation.file_not_allowed'))
                 ->send();
 
             throw $e;
@@ -1207,7 +1216,7 @@ class FileExplorer extends \Livewire\Component
                     'uploaded_by_type' => $actor ? $actor::class : null,
                     'uploaded_by_id'   => $actor?->getAuthIdentifier(),
                 ])
-                ->toMediaCollection();
+                ->toMediaCollection(UploadRules::collection());
 
             $uploaded++;
         }
@@ -1228,7 +1237,7 @@ class FileExplorer extends \Livewire\Component
         if ($uploaded > 0) {
             Notification::make()
                 ->success()
-                ->title('آپلود شد')
+                ->title(__('filament-file-explorer::file-explorer.uploaded'))
                 ->body($uploaded.' فایل در «'.$folder->name.'»')
                 ->send();
         }
@@ -1275,8 +1284,8 @@ class FileExplorer extends \Livewire\Component
             if (! $state['allowed']) {
                 Notification::make()
                     ->warning()
-                    ->title($media->name ?: $media->file_name)
-                    ->body($state['reason'] ?? 'حذف این فایل مجاز نیست.')
+                    ->title(MediaLabel::display($media))
+                    ->body($state['reason'] ?? __('filament-file-explorer::file-explorer.file_delete_denied'))
                     ->send();
 
                 continue;
@@ -1290,7 +1299,7 @@ class FileExplorer extends \Livewire\Component
             if ((int) $folderId === $this->rootFolderId) {
                 Notification::make()
                     ->warning()
-                    ->title('پوشه ریشه پرسشنامه قابل حذف نیست')
+                    ->title(__('filament-file-explorer::file-explorer.root_not_deletable'))
                     ->send();
 
                 continue;
@@ -1309,7 +1318,7 @@ class FileExplorer extends \Livewire\Component
                 Notification::make()
                     ->warning()
                     ->title($folder->name)
-                    ->body($folderState['reason'] ?? 'حذف این پوشه مجاز نیست.')
+                    ->body($folderState['reason'] ?? __('filament-file-explorer::file-explorer.folder_delete_denied'))
                     ->send();
 
                 continue;
@@ -1322,7 +1331,9 @@ class FileExplorer extends \Livewire\Component
         if ($deleted > 0) {
             Notification::make()
                 ->success()
-                ->title($deleted === 1 ? 'مورد حذف شد' : "{$deleted} مورد حذف شد")
+                ->title($deleted === 1
+                    ? __('filament-file-explorer::file-explorer.item_deleted')
+                    : __('filament-file-explorer::file-explorer.items_deleted', ['count' => $deleted]))
                 ->send();
         }
 
@@ -1350,7 +1361,7 @@ class FileExplorer extends \Livewire\Component
             $this->deleteFolderRecursive($child);
         }
 
-        foreach ($folder->getMedia() as $media) {
+        foreach ($folder->getMedia(UploadRules::collection()) as $media) {
             $media->delete();
         }
 
@@ -1475,7 +1486,7 @@ class FileExplorer extends \Livewire\Component
         $this->dispatch('fe-sel-cleared');
         $this->currentFolder = $this->currentFolder->fresh(['children']);
         $this->loadFolders();
-        Notification::make()->success()->title('کپی شد')->send();
+        Notification::make()->success()->title(__('filament-file-explorer::file-explorer.copied'))->send();
     }
 
     /**

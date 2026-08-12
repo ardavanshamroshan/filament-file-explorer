@@ -6,9 +6,6 @@ namespace Ardavan\FilamentFileExplorer;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
 
 class FilamentFileExplorerPlugin implements Plugin
 {
@@ -51,10 +48,5 @@ class FilamentFileExplorerPlugin implements Plugin
         if ($this->authorizerClass) {
             config(['filament-file-explorer.authorizer' => $this->authorizerClass]);
         }
-
-        FilamentAsset::register([
-            Css::make('filament-file-explorer', __DIR__.'/../resources/dist/file-explorer.css'),
-            Js::make('filament-file-explorer', __DIR__.'/../resources/dist/file-explorer.js'),
-        ], 'ardavan/filament-file-explorer');
     }
 }

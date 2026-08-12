@@ -7,6 +7,8 @@
             $fileCollection = collect($searchedFiles ?: $currentFolder->getMedia(config('filament-file-explorer.collection')));
             $sortedMedia = $this->sortedFiles($fileCollection);
             $abilities = $this->abilities();
+            $locale = str_replace('_', '-', app()->getLocale());
+            $i18n = trans('filament-file-explorer::file-explorer');
         @endphp
         <div
             class="w-full"
@@ -15,6 +17,9 @@
                 rootFolderId: {{ $rootFolderId }},
                 abilities: @js($abilities),
                 mediaUrlBase: @js(url(config('filament-file-explorer.routes.prefix'))),
+                translations: @js($i18n),
+                selectedFolders: @js($selectedFolders),
+                selectedFiles: @js($selectedFiles),
             })"
             x-on:livewire-upload-start="onUploadStart()"
             x-on:livewire-upload-finish="onUploadFinish()"
@@ -31,7 +36,7 @@
             @click.window="closeContext()"
             @keydown.escape.window="closeContext(); $wire.cancelRename(); $wire.cancelNewFolder(); $wire.closeInfo()"
         >
-            <div class="fe-finder w-full overflow-hidden rounded-xl border border-zinc-200/90 bg-zinc-50/80 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40" dir="ltr" lang="en" translate="no">
+            <div class="fe-finder w-full overflow-hidden rounded-xl border border-zinc-200/90 bg-zinc-50/80 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/40" dir="ltr" lang="{{ $locale }}" translate="no">
                 <div class="flex min-h-[560px]">
                     {{-- Sidebar --}}
                     <aside
@@ -40,7 +45,7 @@
                     >
                         <div class="flex items-center gap-2 border-b border-zinc-200/80 px-2.5 py-2 dark:border-zinc-700" x-show="$store.feUi.sidebarOpen" x-cloak>
                             @svg('heroicon-o-folder', 'h-5 w-5 text-zinc-500')
-                            <span class="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Explorer</span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{{ __('filament-file-explorer::file-explorer.explorer') }}</span>
                         </div>
                         <div class="flex-1 overflow-y-auto overflow-x-hidden px-1.5 py-2" x-show="$store.feUi.sidebarOpen" x-cloak>
                             <x-filament-file-explorer::file-explorer.sidebar-tree
@@ -52,27 +57,27 @@
 
                     <div class="flex min-w-0 flex-1 flex-col">
                 {{-- Toolbar --}}
-                <div class="fe-toolbar flex flex-wrap items-center gap-1 border-b border-zinc-200/80 px-2.5 py-1.5 dark:border-zinc-700/80" dir="ltr">
-                    <div class="flex items-center gap-0.5">
-                        <button type="button" class="fe-tool-btn hidden sm:inline-flex" title="Toggle sidebar" @click="$store.feUi.sidebarOpen = !$store.feUi.sidebarOpen">
-                            <heroicon-o-panel-left class="h-4 w-4" x-show="$store.feUi.sidebarOpen" />
-                            <heroicon-o-panel-left-close class="h-4 w-4" x-show="!$store.feUi.sidebarOpen" x-cloak />
+                <div class="fe-toolbar border-b border-zinc-200/80 px-2.5 py-1.5 dark:border-zinc-700/80" dir="ltr">
+                    <div class="fe-toolbar__primary flex shrink-0 items-center gap-0.5">
+                        <button type="button" class="fe-tool-btn hidden sm:inline-flex" title="{{ __('filament-file-explorer::file-explorer.toolbar.toggle_sidebar') }}" @click="$store.feUi.sidebarOpen = !$store.feUi.sidebarOpen">
+                            <span x-show="$store.feUi.sidebarOpen">@svg('heroicon-o-bars-3', 'h-4 w-4')</span>
+                            <span x-show="!$store.feUi.sidebarOpen" x-cloak>@svg('heroicon-o-bars-3-bottom-left', 'h-4 w-4')</span>
                         </button>
                         <div class="mx-1 hidden h-4 w-px bg-zinc-200 sm:block dark:bg-zinc-600"></div>
-                        <button type="button" class="fe-tool-btn" title="Back" @disabled(!$this->canGoBack()) wire:click="goBack">
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.back') }}" @disabled(!$this->canGoBack()) wire:click="goBack">
                             @svg('heroicon-o-chevron-left', 'h-4 w-4')
                         </button>
-                        <button type="button" class="fe-tool-btn" title="Forward" @disabled(!$this->canGoForward()) wire:click="goForward">
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.forward') }}" @disabled(!$this->canGoForward()) wire:click="goForward">
                             @svg('heroicon-o-chevron-right', 'h-4 w-4')
                         </button>
-                        <button type="button" class="fe-tool-btn" title="Up one level" @disabled((int) $this->currentFolder->id === (int) $this->rootFolderId) wire:click="navigateToParent">
-                            @svg('heroicon-o-corner-left-up', 'h-4 w-4')
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.up') }}" @disabled((int) $this->currentFolder->id === (int) $this->rootFolderId) wire:click="navigateToParent">
+                            @svg('heroicon-o-arrow-uturn-up', 'h-4 w-4')
                         </button>
 
                         <div class="mx-1 h-4 w-px bg-zinc-200 dark:bg-zinc-600"></div>
 
                         @if ($abilities['mkdir'])
-                        <button type="button" class="fe-tool-btn" title="New folder" wire:click="createNewFolder">
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.new_folder') }}" wire:click="createNewFolder">
                             @svg('heroicon-o-folder-plus', 'h-4 w-4')
                         </button>
                         @endif
@@ -89,65 +94,115 @@
                             @change="pickAndUploadFiles($event)"
                         >
 
-                        <button type="button" class="fe-tool-btn" title="Upload files" @click="document.getElementById('fileInput').click()">
-                            @svg('heroicon-o-upload', 'h-4 w-4')
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.upload') }}" @click="document.getElementById('fileInput').click()">
+                            @svg('heroicon-o-arrow-up-tray', 'h-4 w-4')
                         </button>
                         @endif
+                    </div>
 
+                    <div class="fe-toolbar__secondary fe-toolbar__collapse flex shrink-0 items-center gap-0.5">
                         <div class="mx-1 h-4 w-px bg-zinc-200 dark:bg-zinc-600"></div>
 
                         @if ($abilities['rename'])
-                        <button type="button" class="fe-tool-btn" title="Rename" x-cloak
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.rename') }}" x-cloak
                             x-show="($store.feSel.folders.length + $store.feSel.files.length) === 1"
                             @click="toolbarRename()">
                             @svg('heroicon-o-pencil', 'h-3.5 w-3.5')
                         </button>
                         @endif
                         @if ($abilities['download'])
-                        <button type="button" class="fe-tool-btn" title="Download" x-cloak
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.download') }}" x-cloak
                             x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0"
                             @click="toolbarDownload()">
-                            @svg('heroicon-o-download', 'h-3.5 w-3.5')
+                            @svg('heroicon-o-arrow-down-tray', 'h-3.5 w-3.5')
                         </button>
                         @endif
                         @if ($abilities['copy'])
-                        <button type="button" class="fe-tool-btn" title="Copy" x-cloak
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.copy') }}" x-cloak
                             x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0"
                             @click="toolbarCopy()">
-                            @svg('heroicon-o-copy', 'h-3.5 w-3.5')
+                            @svg('heroicon-o-document-duplicate', 'h-3.5 w-3.5')
                         </button>
                         @endif
                         @if ($abilities['move'] || $abilities['copy'])
-                        <button type="button" class="fe-tool-btn" title="Paste" :disabled="!$wire.clipboardReady" @click="$wire.pasteClipboard()">
-                            @svg('heroicon-o-clipboard-paste', 'h-3.5 w-3.5')
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.paste') }}" :disabled="!$wire.clipboardReady" @click="$wire.pasteClipboard()">
+                            @svg('heroicon-o-clipboard-document', 'h-3.5 w-3.5')
                         </button>
                         @endif
                         @if ($abilities['getInfo'])
-                        <button type="button" class="fe-tool-btn" title="Get Info" x-cloak
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.info') }}" x-cloak
                             x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0"
                             @click="toolbarInfo()">
-                            @svg('heroicon-o-info', 'h-3.5 w-3.5')
+                            @svg('heroicon-o-information-circle', 'h-3.5 w-3.5')
                         </button>
                         @endif
                         @if ($abilities['delete'] || $abilities['deleteFolder'])
-                        <button type="button" class="fe-tool-btn fe-tool-btn--ghost-danger" title="Delete" x-cloak
+                        <button type="button" class="fe-tool-btn fe-tool-btn--ghost-danger" title="{{ __('filament-file-explorer::file-explorer.toolbar.delete') }}" x-cloak
                             x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0"
                             @click="confirmDeleteSelected()">
-                            @svg('heroicon-o-trash-2', 'h-3.5 w-3.5')
+                            @svg('heroicon-o-trash', 'h-3.5 w-3.5')
                         </button>
                         @endif
                     </div>
 
-                    <div class="min-w-0 flex-1"></div>
+                    <div class="fe-toolbar__more relative shrink-0" x-data="{ open: false }" @click.outside="open = false">
+                        <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.more_actions') }}" @click="open = !open">
+                            @svg('heroicon-o-ellipsis-vertical', 'h-4 w-4')
+                        </button>
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="fe-menu absolute start-0 top-full z-30 mt-1 w-48 overflow-hidden py-1"
+                        >
+                            @if ($abilities['rename'])
+                            <button type="button" class="fe-view-item" x-show="($store.feSel.folders.length + $store.feSel.files.length) === 1" @click="toolbarRename(); open=false">
+                                @svg('heroicon-o-pencil', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.rename') }}
+                            </button>
+                            @endif
+                            @if ($abilities['download'])
+                            <button type="button" class="fe-view-item" x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0" @click="toolbarDownload(); open=false">
+                                @svg('heroicon-o-arrow-down-tray', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.download') }}
+                            </button>
+                            @endif
+                            @if ($abilities['copy'])
+                            <button type="button" class="fe-view-item" x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0" @click="toolbarCopy(); open=false">
+                                @svg('heroicon-o-document-duplicate', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.copy') }}
+                            </button>
+                            @endif
+                            @if ($abilities['move'] || $abilities['copy'])
+                            <button type="button" class="fe-view-item" :disabled="!$wire.clipboardReady" @click="$wire.pasteClipboard(); open=false">
+                                @svg('heroicon-o-clipboard-document', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.paste') }}
+                            </button>
+                            @endif
+                            @if ($abilities['getInfo'])
+                            <button type="button" class="fe-view-item" x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0" @click="toolbarInfo(); open=false">
+                                @svg('heroicon-o-information-circle', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.info') }}
+                            </button>
+                            @endif
+                            @if ($abilities['delete'] || $abilities['deleteFolder'])
+                            <button type="button" class="fe-view-item text-red-600 dark:text-red-400" x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0" @click="confirmDeleteSelected(); open=false">
+                                @svg('heroicon-o-trash', 'h-3.5 w-3.5') {{ __('filament-file-explorer::file-explorer.toolbar.delete') }}
+                            </button>
+                            @endif
+                        </div>
+                    </div>
 
-                    <div class="ms-auto flex items-center gap-1">
+                    <div class="fe-toolbar__spacer min-w-0 flex-1"></div>
+
+                    <div class="fe-toolbar__end flex shrink-0 items-center gap-1">
                         <span class="me-1 hidden text-[11px] text-zinc-400 sm:inline" x-cloak
                               x-show="($store.feSel.folders.length + $store.feSel.files.length) > 0"
                               x-text="($store.feSel.folders.length + $store.feSel.files.length) + ' selected'"></span>
 
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                            <button type="button" class="fe-tool-btn" title="Sort by" @click="open = !open">
-                                @svg('heroicon-o-arrow-down-up', 'h-3.5 w-3.5')
+                            <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.sort_by') }}" @click="open = !open">
+                                @svg('heroicon-o-arrows-up-down', 'h-3.5 w-3.5')
                             </button>
                             <div
                                 x-show="open"
@@ -161,7 +216,7 @@
                                 class="fe-menu absolute end-0 top-full z-30 mt-1 w-44 overflow-hidden py-1"
                             >
                                 <button type="button" class="fe-view-item {{ $sortBy === 'name' ? 'fe-view-item--active' : '' }}" wire:click="setSort('name')" @click="open=false">
-                                    @svg('heroicon-o-type', 'h-3.5 w-3.5') Name
+                                    @svg('heroicon-o-document-text', 'h-3.5 w-3.5') Name
                                     @if ($sortBy === 'name')
                                         <span class="ms-auto text-[10px] text-teal-600">{{ $sortDir === 'asc' ? 'A→Z' : 'Z→A' }}</span>
                                     @endif
@@ -173,7 +228,7 @@
                                     @endif
                                 </button>
                                 <button type="button" class="fe-view-item {{ $sortBy === 'type' ? 'fe-view-item--active' : '' }}" wire:click="setSort('type')" @click="open=false">
-                                    @svg('heroicon-o-file-type', 'h-3.5 w-3.5') Type
+                                    @svg('heroicon-o-document', 'h-3.5 w-3.5') Type
                                     @if ($sortBy === 'type')
                                         <span class="ms-auto text-[10px] text-teal-600">{{ $sortDir === 'asc' ? 'A→Z' : 'Z→A' }}</span>
                                     @endif
@@ -182,15 +237,15 @@
                         </div>
 
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                            <button type="button" class="fe-tool-btn" title="View options" @click="open = !open">
+                            <button type="button" class="fe-tool-btn" title="{{ __('filament-file-explorer::file-explorer.toolbar.view_options') }}" @click="open = !open">
                                 @if ($viewMode === 'list')
-                                    @svg('heroicon-o-list', 'h-3.5 w-3.5')
+                                    @svg('heroicon-o-list-bullet', 'h-3.5 w-3.5')
                                 @elseif ($viewMode === 'table')
-                                    @svg('heroicon-o-table', 'h-3.5 w-3.5')
+                                    @svg('heroicon-o-table-cells', 'h-3.5 w-3.5')
                                 @elseif ($viewMode === 'details')
-                                    @svg('heroicon-o-align-justify', 'h-3.5 w-3.5')
+                                    @svg('heroicon-o-bars-3', 'h-3.5 w-3.5')
                                 @else
-                                    @svg('heroicon-o-layout-grid', 'h-3.5 w-3.5')
+                                    @svg('heroicon-o-squares-2x2', 'h-3.5 w-3.5')
                                 @endif
                             </button>
                             <div
@@ -204,16 +259,16 @@
                                 x-transition:leave-end="opacity-0"
                                 class="fe-menu absolute end-0 top-full z-30 mt-1 w-44 overflow-hidden py-1"
                             >
-                                <button type="button" class="fe-view-item {{ $viewMode === 'grid' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('grid')" @click="open=false">@svg('heroicon-o-layout-grid', 'h-3.5 w-3.5') Icons</button>
-                                <button type="button" class="fe-view-item {{ $viewMode === 'list' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('list')" @click="open=false">@svg('heroicon-o-list', 'h-3.5 w-3.5') List</button>
-                                <button type="button" class="fe-view-item {{ $viewMode === 'table' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('table')" @click="open=false">@svg('heroicon-o-table', 'h-3.5 w-3.5') Columns</button>
-                                <button type="button" class="fe-view-item {{ $viewMode === 'details' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('details')" @click="open=false">@svg('heroicon-o-align-justify', 'h-3.5 w-3.5') Details</button>
+                                <button type="button" class="fe-view-item {{ $viewMode === 'grid' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('grid')" @click="open=false">@svg('heroicon-o-squares-2x2', 'h-3.5 w-3.5') Icons</button>
+                                <button type="button" class="fe-view-item {{ $viewMode === 'list' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('list')" @click="open=false">@svg('heroicon-o-list-bullet', 'h-3.5 w-3.5') List</button>
+                                <button type="button" class="fe-view-item {{ $viewMode === 'table' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('table')" @click="open=false">@svg('heroicon-o-table-cells', 'h-3.5 w-3.5') Columns</button>
+                                <button type="button" class="fe-view-item {{ $viewMode === 'details' ? 'fe-view-item--active' : '' }}" wire:click="setViewMode('details')" @click="open=false">@svg('heroicon-o-bars-3', 'h-3.5 w-3.5') Details</button>
                             </div>
                         </div>
                         @if ($abilities['search'])
-                        <div class="relative">
-                            @svg('heroicon-o-search', 'pointer-events-none absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400')
-                            <input wire:model.live.debounce.250ms="search" class="fe-input fe-search h-8 w-40 pe-3 ps-8 text-xs sm:w-52" type="search" title="Search files and folders" placeholder="Search…">
+                        <div class="relative shrink-0">
+                            @svg('heroicon-o-magnifying-glass', 'pointer-events-none absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400')
+                            <input wire:model.live.debounce.250ms="search" class="fe-input fe-search h-8 pe-3 ps-8 text-xs" type="search" title="{{ __('filament-file-explorer::file-explorer.toolbar.search') }}" placeholder="{{ __('filament-file-explorer::file-explorer.toolbar.search_placeholder') }}">
                         </div>
                         @endif
                     </div>
@@ -362,10 +417,11 @@
                                 @php
                                     $fileRenaming = $renamingType === 'file' && (int) $renamingId === (int) $media->id;
                                     $fileSelected = in_array($media->id, $selectedFiles, false);
+                                    $fileLabel = \Ardavan\FilamentFileExplorer\Support\MediaLabel::display($media);
+                                    $mimeIcon = \Ardavan\FilamentFileExplorer\Support\MimeIcon::forMedia($media);
                                     $listPreview = str_starts_with((string) $media->mime_type, 'image/')
                                         ? ($media->hasGeneratedConversion('thumbnail') ? $media->getUrl('thumbnail') : $this->mediaOpenUrl($media->id))
                                         : null;
-                                    $mimeIcon = (function_exists('getFileType') ? getFileType($media->mime_type) : null) ?: 'file';
                                     $sizeLabel = number_format(((int) $media->size) / 1024, 1) . ' KB';
                                     $isStripe = $viewMode === 'details' && ($detailRow % 2 === 1);
                                     $detailRow++;
@@ -373,7 +429,7 @@
                                 <div
                                     wire:key="row-file-{{ $media->id }}-{{ $viewMode }}"
                                     @unless($fileRenaming)
-                                        x-on:pointerdown="$store.feDrag.pointerDown($event, 'file', {{ $media->id }}, @js($media->name ?: $media->file_name), $wire)"
+                                        x-on:pointerdown="$store.feDrag.pointerDown($event, 'file', {{ $media->id }}, @js($fileLabel), $wire)"
                                         x-on:click.stop="
                                             if ($store.feDrag.consumeClickSuppression()) return;
                                             $store.feSel.toggle('file', {{ $media->id }}, $event.ctrlKey || $event.metaKey);
@@ -382,7 +438,7 @@
                                     @endunless
                                     x-on:contextmenu.stop.prevent="
                                         if (!$store.feSel.hasFile({{ $media->id }})) { $store.feSel.toggle('file', {{ $media->id }}, false); }
-                                        $dispatch('fe-context', { type: 'file', id: {{ $media->id }}, name: @js($media->name ?: $media->file_name), x: $event.clientX, y: $event.clientY })
+                                        $dispatch('fe-context', { type: 'file', id: {{ $media->id }}, name: @js($fileLabel), x: $event.clientX, y: $event.clientY })
                                     "
                                     @class([
                                         'file fe-list-row grid cursor-default items-center gap-2 px-3 py-1.5 text-[13px] transition-colors duration-75 ' . $cols,
@@ -403,12 +459,12 @@
                                         @if ($listPreview)
                                             <img src="{{ $listPreview }}" alt="" draggable="false" loading="lazy" class="pointer-events-none h-5 w-5 object-contain">
                                         @else
-                                            @svg('heroicon-o-document', 'h-12 w-12 text-zinc-400')
+                                            <x-filament-file-explorer::file-explorer.mime-icon :icon="$mimeIcon" size="sm" />
                                         @endif
                                         @if ($fileRenaming)
                                             <input type="text" id="rename-input" wire:model="renameValue" wire:keydown.enter.prevent="saveRename" wire:keydown.escape.prevent="cancelRename" wire:blur="saveRename" class="fe-input fe-rename-input w-full px-1.5 py-0.5 text-[13px]" @click.stop @mousedown.stop>
                                         @else
-                                            <span class="truncate text-zinc-800 dark:text-zinc-100">{{ $media->name ?: $media->file_name }}</span>
+                                            <span class="truncate text-zinc-800 dark:text-zinc-100">{{ $fileLabel }}</span>
                                         @endif
                                     </div>
                                     <span class="truncate text-xs text-zinc-500">{{ strtoupper(pathinfo($media->file_name, PATHINFO_EXTENSION) ?: 'FILE') }}</span>
@@ -501,7 +557,7 @@
                             <div class="fe-inspector-head flex items-center justify-between gap-2 px-3 py-2.5">
                                 <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500" translate="no">Get Info</span>
                                 <button type="button" class="fe-tool-btn" wire:click="closeInfo" title="Close">
-                                    @svg('heroicon-o-x', 'h-3.5 w-3.5')
+                                    @svg('heroicon-o-x-mark', 'h-3.5 w-3.5')
                                 </button>
                             </div>
                             <div class="flex flex-1 flex-col gap-3 overflow-y-auto p-3">
@@ -511,10 +567,7 @@
                                     @elseif (!empty($infoItem['preview']))
                                         <img src="{{ $infoItem['preview'] }}" alt="" class="mb-2 h-20 w-20 rounded-lg object-cover ring-1 ring-black/5">
                                     @else
-                                        @php
-                                            $infoMimeIcon = (function_exists('getFileType') ? getFileType($infoItem['mime'] ?? null) : null) ?: 'file';
-                                        @endphp
-                                        @svg('heroicon-o-document', 'h-16 w-16 text-zinc-400')
+                                        <x-filament-file-explorer::file-explorer.mime-icon :icon="$infoItem['icon'] ?? 'file'" size="lg" class="mb-2" />
                                     @endif
                                     <div class="w-full truncate text-[13px] font-semibold text-zinc-900 dark:text-zinc-100">{{ $infoItem['name'] }}</div>
                                     <div class="mt-0.5 text-[11px] text-zinc-400">{{ $infoItem['mime'] }}</div>
@@ -563,14 +616,14 @@
                         </template>
                         <template x-if="abilities.upload">
                             <button type="button" class="fe-ctx-item" @click="run(() => document.getElementById('fileInput')?.click())">
-                                @svg('heroicon-o-upload', 'fe-ctx-icon') Upload Files
+                                @svg('heroicon-o-arrow-up-tray', 'fe-ctx-icon') Upload Files
                             </button>
                         </template>
                         <template x-if="abilities.move || abilities.copy">
                             <div>
                                 <div class="fe-ctx-sep" x-show="abilities.mkdir || abilities.upload"></div>
                                 <button type="button" class="fe-ctx-item" :disabled="!$wire.clipboardReady" @click="run(() => $wire.pasteClipboard())">
-                                    @svg('heroicon-o-clipboard-paste', 'fe-ctx-icon') Paste
+                                    @svg('heroicon-o-clipboard-document', 'fe-ctx-icon') Paste
                                 </button>
                             </div>
                         </template>
@@ -578,7 +631,7 @@
                             <div>
                                 <div class="fe-ctx-sep"></div>
                                 <button type="button" class="fe-ctx-item" @click="run(() => $wire.showInfo())">
-                                    @svg('heroicon-o-info', 'fe-ctx-icon') Get Info
+                                    @svg('heroicon-o-information-circle', 'fe-ctx-icon') Get Info
                                 </button>
                             </div>
                         </template>
@@ -591,7 +644,7 @@
                             @mouseleave="hide()"
                         >
                             <button type="button" class="fe-ctx-item fe-ctx-item--fly" tabindex="-1" @click.prevent>
-                                <span class="inline-flex items-center gap-2">@svg('heroicon-o-layout-grid', 'fe-ctx-icon') View</span>
+                                <span class="inline-flex items-center gap-2">@svg('heroicon-o-squares-2x2', 'fe-ctx-icon') View</span>
                                 @svg('heroicon-o-chevron-right', 'h-3.5 w-3.5 opacity-40')
                             </button>
                             <div class="fe-ctx-sub" x-show="open" x-cloak
@@ -601,10 +654,10 @@
                                  x-transition:leave="transition ease-in duration-75"
                                  x-transition:leave-start="opacity-100"
                                  x-transition:leave-end="opacity-0">
-                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('grid'))">@svg('heroicon-o-layout-grid', 'fe-ctx-icon') Icons</button>
-                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('list'))">@svg('heroicon-o-list', 'fe-ctx-icon') List</button>
-                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('table'))">@svg('heroicon-o-table', 'fe-ctx-icon') Columns</button>
-                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('details'))">@svg('heroicon-o-align-justify', 'fe-ctx-icon') Details</button>
+                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('grid'))">@svg('heroicon-o-squares-2x2', 'fe-ctx-icon') Icons</button>
+                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('list'))">@svg('heroicon-o-list-bullet', 'fe-ctx-icon') List</button>
+                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('table'))">@svg('heroicon-o-table-cells', 'fe-ctx-icon') Columns</button>
+                                <button type="button" class="fe-ctx-item" @click="run(() => $wire.setViewMode('details'))">@svg('heroicon-o-bars-3', 'fe-ctx-icon') Details</button>
                             </div>
                         </div>
 
@@ -615,7 +668,7 @@
                             @mouseleave="hide()"
                         >
                             <button type="button" class="fe-ctx-item fe-ctx-item--fly" tabindex="-1" @click.prevent>
-                                <span class="inline-flex items-center gap-2">@svg('heroicon-o-arrow-down-up', 'fe-ctx-icon') Sort By</span>
+                                <span class="inline-flex items-center gap-2">@svg('heroicon-o-arrows-up-down', 'fe-ctx-icon') Sort By</span>
                                 @svg('heroicon-o-chevron-right', 'h-3.5 w-3.5 opacity-40')
                             </button>
                             <div class="fe-ctx-sub" x-show="open" x-cloak
@@ -639,40 +692,40 @@
                             @svg('heroicon-o-folder-open', 'fe-ctx-icon') Open
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="ctx.type === 'folder'" @click="run(() => { const u = new URL(window.location.href); u.searchParams.set('folder', ctx.id); window.open(u.toString(), '_blank'); })">
-                            @svg('heroicon-o-external-link', 'fe-ctx-icon') Open in New Tab
+                            @svg('heroicon-o-arrow-top-right-on-square', 'fe-ctx-icon') Open in New Tab
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="ctx.type === 'file'" @click="run(() => window.open(fileUrl(ctx.id, false), '_self'))">
                             @svg('heroicon-o-eye', 'fe-ctx-icon') Open
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="ctx.type === 'file'" @click="run(() => window.open(fileUrl(ctx.id, false), '_blank'))">
-                            @svg('heroicon-o-external-link', 'fe-ctx-icon') Open in New Tab
+                            @svg('heroicon-o-arrow-top-right-on-square', 'fe-ctx-icon') Open in New Tab
                         </button>
                         <div class="fe-ctx-sep" x-show="abilities.rename || abilities.copy || abilities.move"></div>
                         <button type="button" class="fe-ctx-item" x-show="abilities.rename" @click="run(() => $wire.startRename(ctx.type, ctx.id))">
                             @svg('heroicon-o-pencil', 'fe-ctx-icon') Rename
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="abilities.copy" @click="run(() => $wire.copySelection(ctx.type === 'folder' ? ctx.id : null, ctx.type === 'file' ? ctx.id : null))">
-                            @svg('heroicon-o-copy', 'fe-ctx-icon') Copy
+                            @svg('heroicon-o-document-duplicate', 'fe-ctx-icon') Copy
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="abilities.move" @click="run(() => $wire.cutSelection(ctx.type === 'folder' ? ctx.id : null, ctx.type === 'file' ? ctx.id : null))">
                             @svg('heroicon-o-scissors', 'fe-ctx-icon') Cut
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="abilities.move || abilities.copy" :disabled="!$wire.clipboardReady" @click="run(() => $wire.pasteClipboard())">
-                            @svg('heroicon-o-clipboard-paste', 'fe-ctx-icon') Paste
+                            @svg('heroicon-o-clipboard-document', 'fe-ctx-icon') Paste
                         </button>
                         <div class="fe-ctx-sep" x-show="abilities.download"></div>
                         <button type="button" class="fe-ctx-item" x-show="abilities.download && ctx.type === 'file'" @click="run(() => window.location.href = fileUrl(ctx.id, true))">
-                            @svg('heroicon-o-download', 'fe-ctx-icon') Download
+                            @svg('heroicon-o-arrow-down-tray', 'fe-ctx-icon') Download
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="abilities.download && ctx.type === 'folder'" @click="run(() => window.location.href = folderZipUrl(ctx.id))">
-                            @svg('heroicon-o-download', 'fe-ctx-icon') Download ZIP
+                            @svg('heroicon-o-arrow-down-tray', 'fe-ctx-icon') Download ZIP
                         </button>
                         <button type="button" class="fe-ctx-item" x-show="abilities.download" @click="run(() => window.location.href = ctx.type === 'folder' ? folderZipUrl(ctx.id) : mediaZipUrl(ctx.id))">
-                            @svg('heroicon-o-file-archive', 'fe-ctx-icon') Compress to ZIP
+                            @svg('heroicon-o-archive-box', 'fe-ctx-icon') Compress to ZIP
                         </button>
                         <div class="fe-ctx-sep" x-show="abilities.getInfo"></div>
                         <button type="button" class="fe-ctx-item" x-show="abilities.getInfo" @click="run(() => $wire.showInfo(ctx.type, ctx.id))">
-                            @svg('heroicon-o-info', 'fe-ctx-icon') Get Info
+                            @svg('heroicon-o-information-circle', 'fe-ctx-icon') Get Info
                         </button>
                         <div class="fe-ctx-sep" x-show="(abilities.delete && ctx.type === 'file') || (abilities.deleteFolder && ctx.type === 'folder')"></div>
                         <button type="button" class="fe-ctx-item fe-ctx-danger"
@@ -681,12 +734,12 @@
                             :title="ctx.deleteHint || ''"
                             @click="run(() => {
                                 if (!ctx.canDelete) {
-                                    alert(ctx.deleteHint || 'حذف مجاز نیست');
+                                    alert(ctx.deleteHint || (translations?.js?.delete_not_allowed ?? @js(__('filament-file-explorer::file-explorer.js.delete_not_allowed'))));
                                     return;
                                 }
                                 confirmDeleteSelected();
                             })">
-                            @svg('heroicon-o-trash-2', 'fe-ctx-icon') Delete
+                            @svg('heroicon-o-trash', 'fe-ctx-icon') Delete
                         </button>
                         <div
                             x-show="((abilities.delete && ctx.type === 'file') || (abilities.deleteFolder && ctx.type === 'folder')) && ctx.deleteHint"

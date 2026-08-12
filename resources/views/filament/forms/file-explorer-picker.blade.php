@@ -16,7 +16,7 @@
                 {{ __('filament-file-explorer::file-explorer.explorer') }}
             </x-slot>
 
-            @livewire('filament-file-explorer.file-explorer', [
+            @livewire('filament-file-explorer::file-explorer', [
                 'scopeKey' => $getScopeKey(),
                 'rootFolderId' => $getRootFolderId(),
             ], key('picker-'.$getId()))

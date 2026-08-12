@@ -26,7 +26,7 @@ abstract class FileExplorerFilesPage extends Page implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-file-explorer.file-explorer.files');
+        return __('filament-file-explorer::file-explorer.files');
     }
 
     public function mount(int|string $record): void
@@ -87,7 +87,7 @@ abstract class FileExplorerFilesPage extends Page implements HasTable
     {
         return [
             Action::make('explorer')
-                ->label(__('filament-file-explorer.file-explorer.explorer'))
+                ->label(__('filament-file-explorer::file-explorer.explorer'))
                 ->icon('heroicon-o-folder-open')
                 ->url(fn (): string => $this->fileExplorerExplorerUrl()),
         ];

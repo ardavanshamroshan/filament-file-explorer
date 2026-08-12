@@ -11,7 +11,7 @@
 
 @php
     $isRenaming = $renamingType === 'file' && (int) $renamingId === (int) $media->id;
-    $label = $media->name ?: $media->file_name;
+    $label = \Ardavan\FilamentFileExplorer\Support\MediaLabel::display($media);
     $isImage = str_starts_with((string) $media->mime_type, 'image/');
     $thumb = null;
     if ($isImage) {
@@ -19,7 +19,7 @@
             ? $media->getUrl('thumbnail')
             : ($previewUrl ?: null);
     }
-    $mimeIcon = (function_exists('getFileType') ? getFileType($media->mime_type) : null) ?: 'file';
+    $mimeIcon = \Ardavan\FilamentFileExplorer\Support\MimeIcon::forMedia($media);
 @endphp
 
 <div
@@ -67,7 +67,7 @@
                 class="pointer-events-none max-h-[48px] max-w-[56px] rounded-md object-contain"
             >
         @else
-            @svg('heroicon-o-document', 'h-12 w-12 text-zinc-400')
+            <x-filament-file-explorer::file-explorer.mime-icon :icon="$mimeIcon" size="md" />
         @endif
     </div>
 

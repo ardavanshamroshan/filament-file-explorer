@@ -37,7 +37,7 @@ trait HasFileExplorerResource
     public static function openFileExplorerAction(string $name = 'files'): Action
     {
         return Action::make($name)
-            ->label(__('filament-file-explorer.file-explorer.explorer'))
+            ->label(__('filament-file-explorer::file-explorer.explorer'))
             ->icon('heroicon-o-folder-open')
             ->url(fn ($record): string => static::getUrl('files', ['record' => $record]));
     }

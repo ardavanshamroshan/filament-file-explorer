@@ -4,10 +4,39 @@
         }
 
         .fe-toolbar {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0.25rem;
             background: #fff;
+            container-type: inline-size;
+            container-name: fe-toolbar;
+            overflow: visible;
         }
         .dark .fe-toolbar {
             background: rgba(24, 24, 27, 0.85);
+        }
+        .fe-toolbar__more {
+            display: none;
+        }
+        .fe-search {
+            width: 10rem;
+        }
+        @container fe-toolbar (max-width: 760px) {
+            .fe-toolbar__collapse {
+                display: none !important;
+            }
+            .fe-toolbar__more {
+                display: inline-flex;
+            }
+            .fe-search {
+                width: 7.5rem;
+            }
+        }
+        @container fe-toolbar (min-width: 960px) {
+            .fe-search {
+                width: 13rem;
+            }
         }
         .fe-sidebar {
             display: none;
@@ -263,6 +292,31 @@
             text-align: center;
             transition: background .08s ease, color .08s ease;
         }
+        .dark .fe-label {
+            color: #e4e4e7;
+        }
+        .fe-mime-icon {
+            display: block;
+            flex-shrink: 0;
+            overflow: visible;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .fe-mime-icon--sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        .fe-mime-icon--md {
+            width: 3rem;
+            height: 3rem;
+        }
+        .fe-mime-icon--lg {
+            width: 4rem;
+            height: 4rem;
+        }
+        .dark .fe-list-row .truncate {
+            color: #e4e4e7;
+        }
         .fe-label--selected {
             display: inline-block;
             -webkit-line-clamp: unset;
@@ -289,13 +343,7 @@
         }
         .fe-icon-well {
             transition: background .08s ease, box-shadow .08s ease;
-        }
-        .fe-mime-icon {
-            display: block;
-            flex-shrink: 0;
             overflow: visible;
-            max-width: 100%;
-            max-height: 100%;
         }
         .fe-icon-well--selected { background: rgba(13, 148, 136, 0.12); }
         .dark .fe-icon-well--selected { background: rgba(45, 212, 191, 0.14); }

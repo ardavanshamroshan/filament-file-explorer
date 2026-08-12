@@ -19,8 +19,11 @@ abstract class TestCase extends Orchestra
 
         \Livewire\Livewire::addNamespace(
             'filament-file-explorer',
+            viewPath: dirname(__DIR__, 2).'/resources/views/livewire',
             classNamespace: 'Ardavan\\FilamentFileExplorer\\Livewire',
         );
+
+        \Livewire\Livewire::component('filament-file-explorer::file-explorer', \Ardavan\FilamentFileExplorer\Livewire\FileExplorer::class);
     }
 
     protected function getPackageProviders($app): array

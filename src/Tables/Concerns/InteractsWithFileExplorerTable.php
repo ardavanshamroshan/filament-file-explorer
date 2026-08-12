@@ -46,17 +46,17 @@ trait InteractsWithFileExplorerTable
 
         return $table
             ->query($this->fileExplorerMediaQuery())
-            ->emptyStateHeading(__('filament-file-explorer.file-explorer.no_files'))
-            ->emptyStateDescription(__('filament-file-explorer.file-explorer.open_explorer_hint'))
+            ->emptyStateHeading(__('filament-file-explorer::file-explorer.no_files'))
+            ->emptyStateDescription(__('filament-file-explorer::file-explorer.open_explorer_hint'))
             ->emptyStateActions([
                 Action::make('openExplorer')
-                    ->label(__('filament-file-explorer.file-explorer.explorer'))
+                    ->label(__('filament-file-explorer::file-explorer.explorer'))
                     ->icon('heroicon-o-folder-open')
                     ->url(fn (): string => $this->fileExplorerExplorerUrl()),
             ])
             ->columns([
                 ImageColumn::make('preview')
-                    ->label(__('filament-file-explorer.file-explorer.preview'))
+                    ->label(__('filament-file-explorer::file-explorer.preview'))
                     ->getStateUsing(function (Media $record): ?string {
                         if (! str_starts_with((string) $record->mime_type, 'image/')) {
                             return null;
@@ -73,20 +73,20 @@ trait InteractsWithFileExplorerTable
                     ->toggleable(),
 
                 TextColumn::make('file_name')
-                    ->label(__('filament-file-explorer.file-explorer.file_name'))
+                    ->label(__('filament-file-explorer::file-explorer.file_name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->limit(60),
 
                 TextColumn::make('size')
-                    ->label(__('filament-file-explorer.file-explorer.size'))
+                    ->label(__('filament-file-explorer::file-explorer.size'))
                     ->sortable()
                     ->formatStateUsing(fn ($state): string => Number::fileSize((int) $state, precision: 1))
                     ->alignEnd(),
 
                 TextColumn::make('mime_type')
-                    ->label(__('filament-file-explorer.file-explorer.type'))
+                    ->label(__('filament-file-explorer::file-explorer.type'))
                     ->badge()
                     ->formatStateUsing(function (Media $record): string {
                         $ext = strtoupper((string) pathinfo((string) $record->file_name, PATHINFO_EXTENSION));
@@ -97,14 +97,14 @@ trait InteractsWithFileExplorerTable
                     ->toggleable(),
 
                 TextColumn::make('created_at')
-                    ->label(__('filament-file-explorer.file-explorer.created_at'))
+                    ->label(__('filament-file-explorer::file-explorer.created_at'))
                     ->sortable()
                     ->toggleable(),
             ])
             ->recordActions([
                 ActionGroup::make([
                     Action::make('download')
-                        ->label(__('filament-file-explorer.file-explorer.download'))
+                        ->label(__('filament-file-explorer::file-explorer.download'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->url(fn (Media $record): string => route('filament-file-explorer.media.show', [
                             'scopeKey' => $scopeKey,
@@ -115,12 +115,12 @@ trait InteractsWithFileExplorerTable
                         ->visible(fn (): bool => ($authorizer->abilities($scopeKey, $rootId)['download'] ?? false)),
 
                     Action::make('openInExplorer')
-                        ->label(__('filament-file-explorer.file-explorer.open_in_explorer'))
+                        ->label(__('filament-file-explorer::file-explorer.open_in_explorer'))
                         ->icon('heroicon-o-folder-open')
                         ->url(fn (Media $record): string => $this->fileExplorerExplorerUrl((int) $record->model_id)),
 
                     Action::make('delete')
-                        ->label(__('filament-file-explorer.file-explorer.delete'))
+                        ->label(__('filament-file-explorer::file-explorer.delete'))
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->requiresConfirmation()
@@ -130,11 +130,11 @@ trait InteractsWithFileExplorerTable
 
                             Notification::make()
                                 ->success()
-                                ->title(__('filament-file-explorer.file-explorer.deleted'))
+                                ->title(__('filament-file-explorer::file-explorer.deleted'))
                                 ->send();
                         }),
                 ])
-                    ->label(__('filament-file-explorer.file-explorer.actions'))
+                    ->label(__('filament-file-explorer::file-explorer.actions'))
                     ->button()
                     ->color('gray'),
             ])

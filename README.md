@@ -11,6 +11,11 @@ Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media
 - Clipboard: cut, copy, paste folders and files
 - Multi-select with marquee selection
 - Context menu, drag-and-drop upload, folder zip download
+- Responsive toolbar — overflow actions collapse into a **⋮** menu on narrow widths
+- MIME icons for PDF, Office, zip, audio, video (+ generic file)
+- File labels always show the extension (e.g. `readme.txt`)
+- Dark-mode readable file names
+- Uploads stored in the configured Spatie collection (`file-explorer` by default)
 - **Filament plugin** with auto-loaded CSS/JS assets
 - **`HasFileExplorer` model trait** — auto root folder + scope key
 - Thin **resource page stubs** — generate only what you need; publish stubs only to customize
@@ -18,6 +23,7 @@ Finder-style file explorer for **Filament v4 and v5**, powered by **Spatie Media
 - **Form picker** field to browse files in modals
 - Generic **`scopeKey` + `rootFolderId`** API — no domain coupling
 - Authorization via **`FileExplorerAuthorizer`** contract
+- Translations: en, fa, ar, de, nl, fr, es, pt, tr, ru, zh_CN, ja, it, hi, id
 
 ## Requirements
 
@@ -46,9 +52,31 @@ use Ardavan\FilamentFileExplorer\FilamentFileExplorerPlugin;
 public function panel(Panel $panel): Panel
 {
     return $panel
+        ->viteTheme('resources/css/filament/admin/theme.css')
         ->plugin(FilamentFileExplorerPlugin::make());
 }
 ```
+
+### Theme (required)
+
+Add package views to your Filament theme so Tailwind utilities compile:
+
+```css
+/* resources/css/filament/admin/theme.css */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/ardavan/filament-file-explorer/resources/views/**/*.blade.php';
+```
+
+```bash
+npm run build
+php artisan filament:assets
+php artisan vendor:publish --tag=filament-file-explorer-assets --force
+```
+
+After upgrading the package, republish assets and rebuild the Filament theme so CSS/JS and MIME icons stay in sync.
 
 ## Fast usage
 
@@ -182,6 +210,18 @@ Graphify output (`graphify-out/`) is gitignored — run locally:
 
 ```bash
 graphify update .
+```
+
+## Translations
+
+Shipped locales: **en**, **fa**, **ar**, **de**, **nl**, **fr**, **es**, **pt**, **tr**, **ru**, **zh_CN**, **ja**, **it**, **hi**, **id**.
+
+Set your app locale (`config/app.php` or Filament panel locale). All UI strings use `filament-file-explorer::file-explorer.*`.
+
+Publish to customize:
+
+```bash
+php artisan vendor:publish --tag=filament-file-explorer-translations
 ```
 
 ## License

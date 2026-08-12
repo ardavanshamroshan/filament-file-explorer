@@ -34,15 +34,27 @@ class InstallCommand extends Command
             $this->call('migrate', ['--no-interaction' => true]);
         }
 
+        $this->call('filament:assets');
+
+        $this->call('vendor:publish', [
+            '--tag'   => 'filament-file-explorer-assets',
+            '--force' => $this->option('force'),
+        ]);
+
         $this->components->info('Filament File Explorer installed.');
         $this->newLine();
         $this->line('Fast path:');
         $this->line('  1. php artisan vendor:publish --provider="Spatie\\MediaLibrary\\MediaLibraryServiceProvider" --tag="medialibrary-migrations"');
         $this->line('  2. php artisan migrate');
         $this->line('  3. Register plugin: ->plugin(\\Ardavan\\FilamentFileExplorer\\FilamentFileExplorerPlugin::make())');
-        $this->line('  4. Model: use HasFileExplorer; + folder_id column');
+        $this->line('  4. php artisan filament:assets');
+        $this->line('  5. php artisan vendor:publish --tag=filament-file-explorer-assets');
+        $this->line('  6. Add to Filament theme.css (required for Tailwind classes in views):');
+        $this->line('       @source \'../../../../vendor/ardavan/filament-file-explorer/resources/views/**/*.blade.php\';');
+        $this->line('     then: npm run build  (and ->viteTheme(...))');
+        $this->line('  7. Model: use HasFileExplorer; + folder_id column');
         $this->line('     php artisan filament-file-explorer:make-folder-migration {table}');
-        $this->line('  5. Pages: php artisan filament-file-explorer:make-page {Resource}');
+        $this->line('  8. Pages: php artisan filament-file-explorer:make-page {Resource}');
         $this->newLine();
         $this->comment('Stubs stay in package. Publish only to customize generators:');
         $this->comment('  php artisan filament-file-explorer:install --stubs');

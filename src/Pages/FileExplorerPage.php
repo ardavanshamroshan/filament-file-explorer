@@ -20,7 +20,7 @@ abstract class FileExplorerPage extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-file-explorer.file-explorer.explorer');
+        return __('filament-file-explorer::file-explorer.explorer');
     }
 
     public function mount(int|string $record): void
@@ -71,7 +71,7 @@ abstract class FileExplorerPage extends Page
 
         try {
             $actions[] = Action::make('filesList')
-                ->label(__('filament-file-explorer.file-explorer.files'))
+                ->label(__('filament-file-explorer::file-explorer.files'))
                 ->icon('heroicon-o-table-cells')
                 ->url(fn (): string => static::getResource()::getUrl(
                     $this->fileExplorerFilesPageName(),

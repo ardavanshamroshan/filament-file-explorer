@@ -9,8 +9,12 @@ use Ardavan\FilamentFileExplorer\Commands\MakeAuthorizerCommand;
 use Ardavan\FilamentFileExplorer\Commands\MakeFolderMigrationCommand;
 use Ardavan\FilamentFileExplorer\Commands\MakePageCommand;
 use Ardavan\FilamentFileExplorer\Contracts\FileExplorerAuthorizer;
+use Ardavan\FilamentFileExplorer\Livewire\FileExplorer;
 use Ardavan\FilamentFileExplorer\Support\FileExplorerManager;
 use Ardavan\FilamentFileExplorer\Support\FolderTree;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
@@ -27,7 +31,7 @@ class FilamentFileExplorerServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->discoversMigrations()
             ->runsMigrations()
-            ->hasAssets(['resources/dist', 'resources/images'])
+            ->hasAssets()
             ->hasCommands([
                 InstallCommand::class,
                 MakePageCommand::class,
@@ -52,18 +56,35 @@ class FilamentFileExplorerServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->registerFilamentAssets();
+
         Livewire::addNamespace(
             'filament-file-explorer',
+            viewPath: __DIR__.'/../resources/views/livewire',
             classNamespace: 'Ardavan\\FilamentFileExplorer\\Livewire',
         );
+
+        Livewire::component('filament-file-explorer::file-explorer', FileExplorer::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../stubs' => base_path('stubs/filament-file-explorer'),
             ], 'filament-file-explorer-stubs');
+
+            $this->publishes([
+                __DIR__.'/../resources/images' => public_path('vendor/filament-file-explorer'),
+            ], 'filament-file-explorer-assets');
         }
 
         $this->registerRoutes();
+    }
+
+    protected function registerFilamentAssets(): void
+    {
+        FilamentAsset::register([
+            Css::make('filament-file-explorer', __DIR__.'/../resources/dist/file-explorer.css'),
+            Js::make('filament-file-explorer', __DIR__.'/../resources/dist/file-explorer.js'),
+        ], 'ardavan/filament-file-explorer');
     }
 
     protected function registerRoutes(): void

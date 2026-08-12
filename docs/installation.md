@@ -8,6 +8,31 @@ php artisan filament-file-explorer:install --migrate
 
 Register `FilamentFileExplorerPlugin::make()` on the panel.
 
+## Theme (required)
+
+Explorer Blade views use Tailwind utility classes. Add the package views to your Filament theme and rebuild:
+
+```css
+/* resources/css/filament/admin/theme.css */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/ardavan/filament-file-explorer/resources/views/**/*.blade.php';
+```
+
+```php
+->viteTheme('resources/css/filament/admin/theme.css')
+```
+
+```bash
+npm run build
+php artisan filament:assets
+php artisan vendor:publish --tag=filament-file-explorer-assets
+```
+
+Plugin CSS/JS (`fe-*` styles + Alpine UI) load via Filament assets. Folder icon image publishes under `public/vendor/filament-file-explorer/`.
+
 ## Fast path
 
 1. Model: `use HasFileExplorer`

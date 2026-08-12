@@ -13,6 +13,33 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
             };
         }
 
+        // Keep Livewire $wire outside Alpine reactive stores — wrapping the proxy breaks method calls.
+        let feWireRef = null;
+
+        function setFeWire(wire) {
+            if (wire) {
+                feWireRef = wire;
+            }
+        }
+
+        function callFeWire(method, ...args) {
+            const wire = feWireRef;
+            if (!wire) return;
+
+            const direct = wire[method];
+            if (typeof direct === 'function') {
+                return direct.apply(wire, args);
+            }
+
+            if (typeof wire.$call === 'function') {
+                return wire.$call(method, ...args);
+            }
+
+            if (typeof wire.call === 'function') {
+                return wire.call(method, ...args);
+            }
+        }
+
         function registerQfSelStore() {
             if (typeof Alpine === 'undefined') return;
             if (Alpine.store('feDrag')?.pointerDown) {
@@ -23,10 +50,9 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                 files: [],
                 marqueeFolders: [],
                 marqueeFiles: [],
-                wire: null,
                 _syncTimer: null,
                 setWire(wire) {
-                    this.wire = wire;
+                    setFeWire(wire);
                 },
                 replace(folders, files) {
                     this.folders = (folders || []).map(Number);
@@ -84,18 +110,18 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     this.clearMarquee();
                     if (this._syncTimer) clearTimeout(this._syncTimer);
                     this._syncTimer = null;
-                    if (sync) this.wire?.clearSelection();
+                    if (sync) callFeWire('clearSelection');
                 },
                 flushSync() {
                     if (this._syncTimer) clearTimeout(this._syncTimer);
                     this._syncTimer = null;
-                    this.wire?.setSelection([...this.folders], [...this.files]);
+                    callFeWire('setSelection', [...this.folders], [...this.files]);
                 },
                 queueSync() {
                     if (this._syncTimer) clearTimeout(this._syncTimer);
                     this._syncTimer = setTimeout(() => {
                         this._syncTimer = null;
-                        this.wire?.setSelection([...this.folders], [...this.files]);
+                        callFeWire('setSelection', [...this.folders], [...this.files]);
                     }, 40);
                 },
             });
@@ -109,7 +135,6 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                 label: '',
                 dropTargetId: null,
                 ghost: null,
-                wire: null,
                 startX: 0,
                 startY: 0,
                 _onMove: null,
@@ -134,7 +159,7 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     // Keep default so double-click still works; stop bubble so marquee does not start
                     event.stopPropagation();
 
-                    this.wire = wire;
+                    setFeWire(wire);
                     this.label = label || 'item';
                     this.prepareSelection(type, id);
                     this.startX = event.clientX;
@@ -180,7 +205,7 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     this._onMove = null;
                     this._onUp = null;
 
-                    if (this.active && this.dropTargetId !== null && this.wire) {
+                    if (this.active && this.dropTargetId !== null) {
                         const targetId = Number(this.dropTargetId);
                         const folders = this.folders.filter((id) => id !== targetId);
                         const files = [...this.files];
@@ -188,10 +213,10 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                         if (folders.length || files.length) {
                             const copy = event.altKey || event.ctrlKey;
                             if (copy && this.abilities.copy) {
-                                this.wire.copyItemsToFolder(targetId, folders, files);
+                                callFeWire('copyItemsToFolder', targetId, folders, files);
                                 Alpine.store('feSel').clear({ sync: false });
                             } else if (!copy && this.abilities.move) {
-                                this.wire.moveItemsToFolder(targetId, folders, files);
+                                callFeWire('moveItemsToFolder', targetId, folders, files);
                                 Alpine.store('feSel').clear({ sync: false });
                             }
                         }
@@ -260,7 +285,8 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     event.stopPropagation();
                     if (!this.abilities.upload) return;
                     if (!event.dataTransfer?.files?.length) return;
-                    wire.prepareUploadToFolder(targetFolderId);
+                    setFeWire(wire);
+                    callFeWire('prepareUploadToFolder', targetFolderId);
                     window.dispatchEvent(new CustomEvent('fe-upload-files', {
                         detail: { files: event.dataTransfer.files },
                     }));
@@ -376,6 +402,7 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                 scopeKey: config.scopeKey,
                 abilities: config.abilities || {},
                 mediaUrlBase: config.mediaUrlBase || '/file-explorer/media',
+                translations: config.translations || {},
                 ctx: { open: false, type: 'empty', id: null, name: '', x: 0, y: 0, canDelete: true, deleteHint: '' },
 
                 init() {
@@ -385,8 +412,8 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     Alpine.store('feSel').setWire(this.$wire);
                     Alpine.store('feDrag').abilities = this.abilities;
                     Alpine.store('feSel').replace(
-                        @js($selectedFolders),
-                        @js($selectedFiles)
+                        config.selectedFolders || [],
+                        config.selectedFiles || []
                     );
                     this.$watch('$wire.selectedFolders', (v) => {
                         const local = Alpine.store('feSel').folders.join(',');
@@ -435,7 +462,7 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     const folders = [...Alpine.store('feSel').folders];
                     const files = [...Alpine.store('feSel').files];
                     if (!folders.length && !files.length) return;
-                    if (!confirm('Delete selected items?')) return;
+                    if (!confirm(this.translations?.js?.confirm_delete_selected || 'Delete selected items?')) return;
                     if (Alpine.store('feSel')._syncTimer) clearTimeout(Alpine.store('feSel')._syncTimer);
                     Alpine.store('feSel')._syncTimer = null;
                     Alpine.store('feSel').clearMarquee();
@@ -461,7 +488,7 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                             this.ctx.deleteHint = state.hint || state.reason || '';
                         } catch (e) {
                             this.ctx.canDelete = false;
-                            this.ctx.deleteHint = 'حذف مجاز نیست';
+                            this.ctx.deleteHint = this.translations?.js?.delete_not_allowed || 'Delete not allowed';
                         }
                     }
                 },
@@ -703,11 +730,11 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                     if (!files || !files.length) return;
                     const filtered = [...files].filter(file => this.isAllowedFile(file));
                     if (!filtered.length) {
-                        Alpine.store('feUpload').error('فرمت فایل مجاز نیست');
+                        Alpine.store('feUpload').error(this.translations?.validation?.invalid_format || 'Invalid file format');
                         return;
                     }
                     this.onUploadStart();
-                    @this.uploadMultiple(
+                    this.$wire.uploadMultiple(
                         'files',
                         filtered,
                         () => { this.onUploadFinish(); },
@@ -764,3 +791,6 @@ function qfCtxFlyout(openDelay = 160, closeDelay = 100) {
                 }, 50);
             });
         });
+
+        window.qfCtxFlyout = qfCtxFlyout;
+        window.FileExplorerUi = FileExplorerUi;
