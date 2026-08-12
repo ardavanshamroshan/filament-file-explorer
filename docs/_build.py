@@ -46,7 +46,6 @@ PAGES = [
 
 GUIDE_BODIES = {
     "installation": """
-<h1>Installation</h1>
 <p>Install the package, run Media Library migrations, then register the Filament plugin.</p>
 <div class="code-panel"><header>Composer</header>
 <pre><code>composer require ardavan/filament-file-explorer:"^0.5" -W
@@ -93,7 +92,6 @@ php artisan filament:assets</code></pre></div>
 <p>__HONEY_NEXT__</p>
 """,
     "explorer": """
-<h1>Explorer page</h1>
 <p>Full Finder-style surface: sidebar tree, grid/list, toolbar, clipboard, Get Info, context menu.</p>
 <figure class="shot"><img src="../images/explorer-grid.png" alt="Explorer grid view"><figcaption>Grid view with MIME icons</figcaption></figure>
 <figure class="shot"><img src="../images/explorer-list.png" alt="Explorer list view"><figcaption>List view</figcaption></figure>
@@ -106,17 +104,14 @@ php artisan filament:assets</code></pre></div>
 ])</code></pre></div>
 """,
     "files-table": """
-<h1>Files table</h1>
 <p>Flat Filament table of media in the <code>file-explorer</code> collection — filters, bulk actions, downloads.</p>
 <figure class="shot"><img src="../images/files-table.png" alt="Files table"><figcaption>Files table resource page</figcaption></figure>
 """,
     "form-picker": """
-<h1>Form picker</h1>
 <p>Modal picker to attach existing media from the explorer into a form field.</p>
 <figure class="shot"><img src="../images/form-picker-modal.svg" alt="Form picker"><figcaption>Picker modal</figcaption></figure>
 """,
     "authorization": """
-<h1>Authorization</h1>
 <p>Implement <code>FileExplorerAuthorizer</code> (or generate one) to gate browse / upload / rename / delete per owner model.</p>
 <div class="code-panel"><header>Authorizer</header>
 <pre><code>final class QuestionFileExplorerAuthorizer implements FileExplorerAuthorizer
@@ -129,7 +124,6 @@ php artisan filament:assets</code></pre></div>
 }</code></pre></div>
 """,
     "configuration": """
-<h1>Configuration</h1>
 <p>Publish config to tune collection name, disk, upload rules, and UI defaults.</p>
 <div class="code-panel"><header>Publish</header>
 <pre><code>php artisan vendor:publish --tag=filament-file-explorer-config</code></pre></div>
@@ -162,20 +156,25 @@ def nav_link(href: str, label: str, active: bool = False) -> str:
 def header(prefix: str, active: str | None = None) -> str:
     home = f"{prefix}index.html" if prefix else "./"
     docs = f"{prefix}guide/installation.html"
+    features = "#features" if not prefix else f"{prefix}index.html#features"
     return f'''
 <header class="site-header" x-data="{{ showMobileMenu: false }}">
   <div class="wrap header-bar">
     <div class="header-left">
       <a class="brand-cell" href="{home}" aria-label="Filament File Explorer home">
-        <span class="plugin-mark">FE</span>
+        <span class="plugin-mark"><img src="{prefix}images/thumbnail.png" alt="" width="40" height="40"></span>
         <span class="plugin-title">File Explorer<small>for Filament</small></span>
+        <span class="brand-author">
+          <strong>Ardavan Shamroshan</strong>
+          <a href="mailto:shamroshanardavan@gmail.com">shamroshanardavan@gmail.com</a>
+        </span>
       </a>
       <a class="filament-logo-link" href="https://filamentphp.com" target="_blank" rel="noopener noreferrer" aria-label="Filament homepage">
         {FILAMENT_LOGO}
       </a>
       <nav class="nav-desktop" aria-label="Primary">
         {nav_link(home if not prefix else f"{prefix}", "Home", active == "home")}
-        {nav_link(f"{prefix}#features" if not prefix else f"{prefix}index.html#features", "Features")}
+        {nav_link(features, "Features")}
         {nav_link(docs, "Docs", active == "docs")}
         {nav_link("https://github.com/ardavanshamroshan/filament-file-explorer", "GitHub")}
       </nav>
@@ -188,9 +187,10 @@ def header(prefix: str, active: str | None = None) -> str:
           <span>on GitHub</span>
         </div>
       </a>
-      <a class="docs-cta-link" href="{docs}">
-        <img src="{prefix}images/docs-icon-folder.png" alt="" width="20" height="20" style="width:1.25rem;height:1.25rem;border-radius:.35rem" />
-        <span>Documentation</span>
+      <a class="docs-cta-link" href="{docs}" aria-label="Open documentation">
+        <img class="barney" src="{prefix}images/barney.webp" alt="" width="20" height="32" fetchpriority="high">
+        <span class="docs-label-short">Docs</span>
+        <span class="docs-label-long">Documentation</span>
       </a>
       <button type="button" class="menu-toggle" @click="showMobileMenu = true" aria-label="Open menu">Menu</button>
     </div>
@@ -202,7 +202,8 @@ def header(prefix: str, active: str | None = None) -> str:
     <a href="{home}" @click="showMobileMenu = false">Home</a>
     <a href="{docs}" @click="showMobileMenu = false">Documentation</a>
     <a href="https://github.com/ardavanshamroshan/filament-file-explorer" @click="showMobileMenu = false">GitHub</a>
-    <a href="https://ardavanshamroshan.ir" @click="showMobileMenu = false">Author site</a>
+    <a href="mailto:shamroshanardavan@gmail.com" @click="showMobileMenu = false">Email Ardavan</a>
+    <a href="https://ardavanshamroshan.ir" @click="showMobileMenu = false">ardavanshamroshan.ir</a>
     <a href="#" @click="showMobileMenu = false" style="margin-top:.5rem;font-weight:600">Close</a>
   </div>
 </header>
@@ -243,6 +244,7 @@ def author_block(prefix: str) -> str:
         <h3>Ardavan Shamroshan</h3>
         <p>Laravel · Filament · product-minded admin UX. Finder-style explorer for panels that need real file workflows.</p>
         <div class="author-links">
+          <a class="chip" href="mailto:shamroshanardavan@gmail.com">shamroshanardavan@gmail.com</a>
           <a class="chip" href="https://ardavanshamroshan.ir" target="_blank" rel="noopener">{WEB_ICON} ardavanshamroshan.ir</a>
           <a class="chip" href="https://github.com/ardavanshamroshan" target="_blank" rel="noopener">{GH_ICON} @ardavanshamroshan</a>
           <a class="chip" href="https://github.com/ardavanshamroshan/filament-file-explorer" target="_blank" rel="noopener">{GH_ICON} Plugin repo</a>
@@ -304,17 +306,7 @@ def sidebar(active: str) -> str:
         f'<a href="{slug}.html" class="{"is-active" if slug == active else ""}">{label}</a>'
         for slug, label in PAGES
     )
-    return f'''
-<aside class="docs-side">
-  <h4>Documentation</h4>
-  {links}
-  <h4 style="margin-top:1.25rem">Resources</h4>
-  <a href="../">Home</a>
-  <a href="https://github.com/ardavanshamroshan/filament-file-explorer">Repository</a>
-  <a href="https://packagist.org/packages/ardavan/filament-file-explorer">Packagist</a>
-  <a href="https://ardavanshamroshan.ir">Author</a>
-</aside>
-'''
+    return f'<nav class="guide-pills" aria-label="Guide pages">{links}</nav>'
 
 
 def build_index():
@@ -324,7 +316,7 @@ def build_index():
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow">
-          <img src="images/docs-icon-folder.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
+          <img src="images/thumbnail.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
           Filament v4 · v5 · Spatie Media Library
         </div>
         <h1>Finder-style files for your Filament panel</h1>
@@ -341,7 +333,7 @@ def build_index():
         </div>
       </div>
       <div class="hero-art">
-        <img src="images/docs-hero-art.png" alt="Filament File Explorer product art">
+        <img src="images/cover.png" alt="Filament File Explorer cover">
       </div>
     </div>
   </section>
@@ -374,19 +366,27 @@ def build_index():
           <p>Grid, list, menus, and the files table.</p>
         </div>
       </div>
-      <div class="gallery">
-        <figure class="shot">
+      <div class="bento">
+        <figure class="shot shot-lg">
           <img src="images/explorer-grid.png" alt="Grid view">
-          <figcaption>Grid view</figcaption>
+          <figcaption><span>Grid view</span><span class="tag">Finder</span></figcaption>
         </figure>
-        <div class="shot-stack">
-          <figure class="shot"><img src="images/explorer-list.png" alt="List view"><figcaption>List view</figcaption></figure>
-          <figure class="shot"><img src="images/files-table.png" alt="Files table"><figcaption>Files table</figcaption></figure>
-        </div>
-      </div>
-      <div class="gallery" style="margin-top:1rem">
-        <figure class="shot"><img src="images/explorer-context-menu.png" alt="Context menu"><figcaption>Context menu</figcaption></figure>
-        <figure class="shot"><img src="images/explorer-get-info.png" alt="Get Info"><figcaption>Get Info</figcaption></figure>
+        <figure class="shot shot-md">
+          <img src="images/explorer-list.png" alt="List view">
+          <figcaption><span>List view</span><span class="tag">Rows</span></figcaption>
+        </figure>
+        <figure class="shot shot-md">
+          <img src="images/files-table.png" alt="Files table">
+          <figcaption><span>Files table</span><span class="tag">Filament</span></figcaption>
+        </figure>
+        <figure class="shot shot-sm">
+          <img src="images/explorer-context-menu.png" alt="Context menu">
+          <figcaption><span>Menus</span><span class="tag">Actions</span></figcaption>
+        </figure>
+        <figure class="shot shot-wide">
+          <img src="images/explorer-get-info.png" alt="Get Info">
+          <figcaption><span>Get Info</span><span class="tag">Inspector</span></figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -431,17 +431,47 @@ php artisan vendor:publish --tag=filament-file-explorer-assets --force</code></p
     )
 
 
+GUIDE_LEADS = {
+    "installation": "Composer, Media Library, theme source, then the plugin — same calm surface as the homepage.",
+    "explorer": "Full Finder surface: tree, grid/list, toolbar, clipboard, Get Info.",
+    "files-table": "Flat Filament table over the file-explorer media collection.",
+    "form-picker": "Modal picker to attach explorer media into forms.",
+    "authorization": "Gate browse / upload / rename / delete with a small authorizer contract.",
+    "configuration": "Publish config for collection, disk, upload rules, UI defaults.",
+}
+
+
 def build_guides():
     for slug, label in PAGES:
         body = f'''
-<div class="wrap docs-shell">
-  {sidebar(slug)}
-  <article class="docs-main">
-    {GUIDE_BODIES[slug]}
-  </article>
-</div>
+<main>
+  <section class="docs-hero">
+    <div class="wrap docs-hero-grid">
+      <div>
+        <div class="eyebrow">
+          <img src="../images/thumbnail.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
+          Documentation · {label}
+        </div>
+        <h1>{label}</h1>
+        <p class="lead">{GUIDE_LEADS[slug]}</p>
+        <div class="hero-actions">
+          {honey_btn("installation.html" if slug != "installation" else "explorer.html", "Continue" if slug != "installation" else "Next: Explorer")}
+          <a class="btn-ghost" href="https://github.com/ardavanshamroshan/filament-file-explorer">{GH_ICON} GitHub</a>
+        </div>
+        {sidebar(slug)}
+      </div>
+      <div class="hero-art">
+        <img src="../images/cover.png" alt="Filament File Explorer cover">
+      </div>
+    </div>
+  </section>
+  <div class="wrap docs-shell">
+    <article class="docs-main">
+      {GUIDE_BODIES[slug]}
+    </article>
+  </div>
+</main>
 '''
-        # author on guide pages too but with ../ prefix — inject manually
         html = shell(
             f"{label} — Filament File Explorer",
             f"{label} documentation for Filament File Explorer",
@@ -449,7 +479,6 @@ def build_guides():
             prefix="../",
             active="docs",
         )
-        # shell already adds empty author when prefix set — we appended author_block
         (GUIDE / f"{slug}.html").write_text(html, encoding="utf-8")
 
 

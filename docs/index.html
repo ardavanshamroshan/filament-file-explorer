@@ -22,8 +22,12 @@
   <div class="wrap header-bar">
     <div class="header-left">
       <a class="brand-cell" href="./" aria-label="Filament File Explorer home">
-        <span class="plugin-mark">FE</span>
+        <span class="plugin-mark"><img src="images/thumbnail.png" alt="" width="40" height="40"></span>
         <span class="plugin-title">File Explorer<small>for Filament</small></span>
+        <span class="brand-author">
+          <strong>Ardavan Shamroshan</strong>
+          <a href="mailto:shamroshanardavan@gmail.com">shamroshanardavan@gmail.com</a>
+        </span>
       </a>
       <a class="filament-logo-link" href="https://filamentphp.com" target="_blank" rel="noopener noreferrer" aria-label="Filament homepage">
         
@@ -74,9 +78,10 @@
           <span>on GitHub</span>
         </div>
       </a>
-      <a class="docs-cta-link" href="guide/installation.html">
-        <img src="images/docs-icon-folder.png" alt="" width="20" height="20" style="width:1.25rem;height:1.25rem;border-radius:.35rem" />
-        <span>Documentation</span>
+      <a class="docs-cta-link" href="guide/installation.html" aria-label="Open documentation">
+        <img class="barney" src="images/barney.webp" alt="" width="20" height="32" fetchpriority="high">
+        <span class="docs-label-short">Docs</span>
+        <span class="docs-label-long">Documentation</span>
       </a>
       <button type="button" class="menu-toggle" @click="showMobileMenu = true" aria-label="Open menu">Menu</button>
     </div>
@@ -88,7 +93,8 @@
     <a href="./" @click="showMobileMenu = false">Home</a>
     <a href="guide/installation.html" @click="showMobileMenu = false">Documentation</a>
     <a href="https://github.com/ardavanshamroshan/filament-file-explorer" @click="showMobileMenu = false">GitHub</a>
-    <a href="https://ardavanshamroshan.ir" @click="showMobileMenu = false">Author site</a>
+    <a href="mailto:shamroshanardavan@gmail.com" @click="showMobileMenu = false">Email Ardavan</a>
+    <a href="https://ardavanshamroshan.ir" @click="showMobileMenu = false">ardavanshamroshan.ir</a>
     <a href="#" @click="showMobileMenu = false" style="margin-top:.5rem;font-weight:600">Close</a>
   </div>
 </header>
@@ -99,7 +105,7 @@
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow">
-          <img src="images/docs-icon-folder.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
+          <img src="images/thumbnail.png" alt="" width="16" height="16" style="width:1rem;height:1rem;border-radius:.25rem">
           Filament v4 · v5 · Spatie Media Library
         </div>
         <h1>Finder-style files for your Filament panel</h1>
@@ -122,7 +128,7 @@
         </div>
       </div>
       <div class="hero-art">
-        <img src="images/docs-hero-art.png" alt="Filament File Explorer product art">
+        <img src="images/cover.png" alt="Filament File Explorer cover">
       </div>
     </div>
   </section>
@@ -161,19 +167,27 @@
           <p>Grid, list, menus, and the files table.</p>
         </div>
       </div>
-      <div class="gallery">
-        <figure class="shot">
+      <div class="bento">
+        <figure class="shot shot-lg">
           <img src="images/explorer-grid.png" alt="Grid view">
-          <figcaption>Grid view</figcaption>
+          <figcaption><span>Grid view</span><span class="tag">Finder</span></figcaption>
         </figure>
-        <div class="shot-stack">
-          <figure class="shot"><img src="images/explorer-list.png" alt="List view"><figcaption>List view</figcaption></figure>
-          <figure class="shot"><img src="images/files-table.png" alt="Files table"><figcaption>Files table</figcaption></figure>
-        </div>
-      </div>
-      <div class="gallery" style="margin-top:1rem">
-        <figure class="shot"><img src="images/explorer-context-menu.png" alt="Context menu"><figcaption>Context menu</figcaption></figure>
-        <figure class="shot"><img src="images/explorer-get-info.png" alt="Get Info"><figcaption>Get Info</figcaption></figure>
+        <figure class="shot shot-md">
+          <img src="images/explorer-list.png" alt="List view">
+          <figcaption><span>List view</span><span class="tag">Rows</span></figcaption>
+        </figure>
+        <figure class="shot shot-md">
+          <img src="images/files-table.png" alt="Files table">
+          <figcaption><span>Files table</span><span class="tag">Filament</span></figcaption>
+        </figure>
+        <figure class="shot shot-sm">
+          <img src="images/explorer-context-menu.png" alt="Context menu">
+          <figcaption><span>Menus</span><span class="tag">Actions</span></figcaption>
+        </figure>
+        <figure class="shot shot-wide">
+          <img src="images/explorer-get-info.png" alt="Get Info">
+          <figcaption><span>Get Info</span><span class="tag">Inspector</span></figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -227,6 +241,7 @@ php artisan vendor:publish --tag=filament-file-explorer-assets --force</code></p
         <h3>Ardavan Shamroshan</h3>
         <p>Laravel · Filament · product-minded admin UX. Finder-style explorer for panels that need real file workflows.</p>
         <div class="author-links">
+          <a class="chip" href="mailto:shamroshanardavan@gmail.com">shamroshanardavan@gmail.com</a>
           <a class="chip" href="https://ardavanshamroshan.ir" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ardavanshamroshan.ir</a>
           <a class="chip" href="https://github.com/ardavanshamroshan" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> @ardavanshamroshan</a>
           <a class="chip" href="https://github.com/ardavanshamroshan/filament-file-explorer" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Plugin repo</a>
