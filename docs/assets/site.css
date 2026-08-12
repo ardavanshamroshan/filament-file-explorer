@@ -174,45 +174,62 @@ code, pre { font-family: var(--mono); }
 .mobile-panel a:hover { background: var(--color-cream-100); color: var(--color-stone-800); font-weight: 600; }
 .mobile-handle { width: 3rem; height: 0.3rem; border-radius: 999px; background: rgb(168 162 158 / .45); margin: 0 auto 1rem; }
 
-/* Honey + ghost CTAs — CSS only */
+/* Honey + ghost Filament CTAs (rocket / swap) */
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-
+.btn-honey-wrap { border-radius: 999px; background: var(--color-honey-200); }
 .btn-honey {
-  --orb: 2.55rem;
-  position: relative; display: inline-flex; align-items: center;
-  height: 3rem; padding: 0 calc(var(--orb) + 0.85rem) 0 1.15rem;
+  position: relative; display: inline-flex; align-items: center; justify-content: flex-start;
+  height: 3.25rem; min-width: 10rem; padding: 0 3.1rem 0 1.25rem;
   border-radius: 999px; background: var(--color-honey-200); color: var(--color-stone-900);
-  font-weight: 600; overflow: hidden; transition: transform .2s ease;
+  font-weight: 600; overflow: hidden; transition: transform .3s ease; will-change: transform;
 }
 .btn-honey:hover { transform: scaleY(1.02); }
-.btn-honey .label { position: relative; z-index: 2; transition: color .25s ease, transform .3s ease; }
-.btn-honey .orb {
-  position: absolute; right: 0.22rem; top: 50%; transform: translateY(-50%);
-  width: var(--orb); height: var(--orb); border-radius: 999px;
-  background: var(--color-stone-900); z-index: 1;
-  display: grid; place-items: center; color: var(--color-honey-100);
-  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+.btn-honey [data-horizon-glow] {
+  position: absolute; top: -2rem; left: 0; z-index: 2;
+  width: 3.5rem; height: 3.5rem; border-radius: 999px;
+  background: var(--color-honey-50); opacity: 0; filter: blur(24px); pointer-events: none;
 }
-.btn-honey .orb svg { width: 1rem; height: 1rem; }
-.btn-honey.is-hot .orb, .btn-honey:hover .orb, .btn-honey:focus-visible .orb { transform: translateY(-50%) scale(7); }
-.btn-honey.is-hot .label, .btn-honey:hover .label, .btn-honey:focus-visible .label {
-  color: #eaeaea; transform: translateX(0.55rem);
+.btn-honey [data-expanding-bg] {
+  position: absolute; right: 0.25rem; z-index: 0;
+  width: 2.75rem; height: 2.75rem; border-radius: 999px; background: var(--color-stone-900);
 }
+.btn-honey [data-text] {
+  position: relative; z-index: 2; padding-right: 0.5rem; white-space: nowrap;
+}
+.btn-honey [data-rocket-container] {
+  position: absolute; right: 0.25rem; z-index: 1;
+}
+.rocket-stage {
+  position: relative; isolation: isolate;
+  display: grid; place-items: center; overflow: hidden;
+  width: 2.75rem; height: 2.75rem; border-radius: 999px;
+  color: var(--color-honey-100);
+  --meteor-color: var(--color-honey-200);
+  --rocket-color: var(--color-honey-100);
+}
+.rocket-stage [data-meteor] { position: absolute; right: -1.25rem; z-index: 0; }
+.rocket-stage [data-meteor].opacity-50,
+.opacity-50 { opacity: 0.5; }
+.rocket-stage [data-meteor] svg path { fill: var(--meteor-color); }
+.rocket-stage [data-rocket-bob] { position: relative; z-index: 1; }
+.rocket-stage [data-rocket-bob] svg { width: 1.45rem; height: 1.45rem; color: currentColor; opacity: 0.9; }
+.rocket-stage .fill-rocket { fill: var(--rocket-color); }
+.rocket-stage .fill-fade { fill: currentColor; opacity: 0.3; }
 
+.btn-ghost-wrap { border-radius: 999px; background: #f2c4d8; }
 .btn-ghost {
-  position: relative; display: inline-flex; align-items: center; gap: 0.55rem;
-  height: 3rem; padding: 0 1.15rem;
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  height: 3.25rem; min-width: 10rem; padding: 0 1.25rem;
   border-radius: 999px; background: #f2c4d8; color: var(--color-stone-900);
-  font-weight: 600; overflow: hidden; transition: transform .2s ease, background .2s ease;
+  font-weight: 600; overflow: hidden; transition: transform .3s ease, background .25s ease; will-change: transform;
 }
-.btn-ghost:hover { transform: scaleY(1.02); background: #f7d4e3; }
-.btn-ghost .swap { position: absolute; left: 1rem; opacity: 0; transform: translateX(-0.6rem); transition: .2s ease; width: 1rem; height: 1rem; }
-.btn-ghost .swap svg { width: 1rem; height: 1rem; }
-.btn-ghost .label { transition: transform .2s ease; }
-.btn-ghost .arrow { width: 1rem; height: 1rem; flex-shrink: 0; transition: .2s ease; }
-.btn-ghost.is-hot .arrow, .btn-ghost:hover .arrow { opacity: 0; transform: translateX(0.8rem); }
-.btn-ghost.is-hot .swap, .btn-ghost:hover .swap { opacity: 1; transform: translateX(0); }
-.btn-ghost.is-hot .label, .btn-ghost:hover .label { transform: translateX(0.85rem); }
+.btn-ghost:hover { transform: scaleY(1.02); background: color-mix(in oklab, #f2c4d8 80%, #fff); }
+.btn-ghost [data-swap-icon] {
+  position: absolute; left: 1.15rem; width: 1.05rem; height: 1.05rem; opacity: 0; flex-shrink: 0;
+}
+.btn-ghost [data-swap-icon] svg { width: 1.05rem; height: 1.05rem; }
+.btn-ghost [data-text] { white-space: nowrap; }
+.btn-ghost [data-arrow] { width: 0.85rem; height: auto; flex-shrink: 0; }
 
 .btn-plain {
   display: inline-flex; align-items: center; gap: 0.35rem;
@@ -243,9 +260,14 @@ code, pre { font-family: var(--mono); }
 .hero-meta strong { color: var(--color-stone-800); }
 .hero-art {
   position: relative; border-radius: 1.25rem; overflow: hidden;
-  border: 1px solid var(--color-bone-100); box-shadow: var(--shadow); background: #111;
+  border: 1px solid var(--color-bone-100); box-shadow: var(--shadow);
+  background: var(--color-cream-100, #faf6ef);
 }
-.hero-art img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: center top; }
+.hero-art img {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 3 / 2; object-fit: contain; object-position: center;
+  background: var(--color-cream-100, #faf6ef);
+}
 
 /* Sections */
 .section { padding: 3rem 0; }
@@ -415,7 +437,7 @@ p code, li code {
 .docs-main th, .docs-main td { border: 1px solid var(--color-bone-100); padding: 0.6rem 0.7rem; text-align: left; }
 .docs-main th { background: var(--color-cream-100); }
 .docs-main .shot { margin: 1.1rem 0; }
-.docs-main .btn-honey { margin-top: 0.75rem; }
+.docs-main .btn-honey-wrap { margin-top: 0.75rem; display: inline-block; }
 
 .site-footer {
   border-top: 1px solid var(--color-bone-100); padding: 2rem 0 3rem; font-size: 0.92rem;

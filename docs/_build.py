@@ -26,9 +26,14 @@ STAR = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" fill="none
 <path d="M8.08887 0.989258C8.31973 0.427753 9.07211 0.326095 9.44336 0.806641C9.4865 0.862481 9.52201 0.923989 9.54883 0.989258V0.991211L11.3418 5.33105L11.458 5.61328L11.7637 5.63867L16.4102 6.0127V6.01367C17.0215 6.06538 17.3475 6.75913 16.9971 7.2627C16.9591 7.31722 16.9145 7.36673 16.8643 7.41016L15.5156 8.57422L15.5205 8.57324L13.3232 10.4697L13.0938 10.668L13.1631 10.9629L14.2432 15.5381L14.2441 15.54C14.3864 16.1331 13.8328 16.6577 13.248 16.4844C13.1823 16.4648 13.1191 16.4371 13.0605 16.4014H13.0615L9.08301 13.9531L8.82031 13.792L8.55859 13.9531L4.5791 16.4004C4.05796 16.7169 3.38971 16.3508 3.37598 15.7412C3.37445 15.6735 3.38178 15.6059 3.39746 15.54V15.5391L4.48145 10.9629L4.55176 10.668L4.32129 10.4697L0.776367 7.41016C0.312197 7.00899 0.456622 6.25511 1.03613 6.05371C1.09645 6.03279 1.1591 6.01868 1.22266 6.0127L1.22363 6.01367L5.87305 5.63867L6.17773 5.61328L6.29492 5.33105L8.08789 0.991211L8.08887 0.989258Z" fill="currentColor" stroke="#292524" stroke-width="1"></path>
 </svg>'''
 
-ROCKET_SVG = ""  # unused
-METEOR = ""
-ARROW = '''<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'''
+ROCKET_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" fill="none" aria-hidden="true">
+<path class="fill-fade" d="M17.627 11.7676V17.4118C17.6269 17.6058 17.5498 17.7918 17.4127 17.9291L14.2679 21.0739C14.1717 21.17 14.0507 21.2372 13.9183 21.2684C13.786 21.2995 13.6476 21.2932 13.5186 21.2502C13.3897 21.2071 13.2753 21.129 13.1882 21.0247C13.1012 20.9203 13.0448 20.7938 13.0255 20.6592L12.5 16.8945L17.627 11.7676ZM13.2324 7.37305H7.58822C7.39423 7.37314 7.20819 7.45018 7.07095 7.58728L3.92611 10.7321C3.83009 10.8283 3.76275 10.9494 3.73163 11.0818C3.70049 11.2141 3.70681 11.3524 3.74984 11.4814C3.79289 11.6103 3.87097 11.7247 3.97535 11.8118C4.07973 11.899 4.20628 11.9553 4.34084 11.9745L8.10549 12.5L13.2324 7.37305ZM4.44338 20.5566C7.89034 20.5566 9.08419 18.754 9.4385 17.9767L7.02334 15.5615C6.24606 15.9158 4.44338 17.1097 4.44338 20.5566Z"></path>
+<path class="fill-rocket" d="M21.2754 5.09522C21.2537 4.73811 21.1021 4.40127 20.849 4.14828C20.5961 3.89529 20.2593 3.74364 19.9021 3.72193C18.7504 3.65327 15.807 3.75856 13.3643 6.20027L12.9295 6.64064H7.58918C7.39608 6.63955 7.20469 6.67686 7.02614 6.75042C6.84759 6.82398 6.68545 6.9323 6.54914 7.0691L3.40888 10.2112C3.2163 10.4036 3.08117 10.646 3.01864 10.9109C2.95612 11.176 2.96868 11.4531 3.05492 11.7114C3.14116 11.9695 3.29766 12.1987 3.50686 12.3729C3.71607 12.5472 3.96969 12.6597 4.23927 12.6978L7.7613 13.1894L11.8088 17.2369L12.3005 20.7608C12.3383 21.0304 12.4507 21.284 12.6251 21.493C12.7995 21.7021 13.029 21.8582 13.2874 21.9437C13.4379 21.9939 13.5956 22.0197 13.7543 22.0197C13.9465 22.02 14.1368 21.9824 14.3145 21.9088C14.492 21.8353 14.6532 21.7273 14.7889 21.5912L17.931 18.4509C18.0678 18.3146 18.1761 18.1525 18.2497 17.9739C18.3232 17.7954 18.3605 17.604 18.3594 17.4109V12.0706L18.7962 11.6339C21.2388 9.19129 21.3441 6.24787 21.2754 5.09522Z"></path>
+</svg>'''
+
+METEOR = '''<svg xmlns="http://www.w3.org/2000/svg" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M17.4801 0L0.610057 15.82C0.610057 15.82 0.280057 16.27 0.700057 16.71C1.11006 17.15 1.65006 16.77 1.65006 16.77L17.4801 0Z"></path></svg>'''
+
+ARROW = '''<svg xmlns="http://www.w3.org/2000/svg" data-arrow viewBox="0 0 28 22" fill="none" aria-hidden="true"><path class="fill-current" fill="currentColor" d="M1 10H0V12H1V10ZM27 12C27.5523 12 28 11.5523 28 11C28 10.4477 27.5523 10 27 10V12ZM1 12H27V10H1V12ZM16 1C16 2.47 16.8 3.88 17.77 5.08C18.77 6.3 20.07 7.45 21.34 8.43C22.61 9.41 23.88 10.25 24.83 10.84C25.3 11.13 25.7 11.36 25.97 11.52L27.38 10.02C26.9 9.76 26.25 9.35 25.48 8.86C24.35 8.14 22.97 7.2 21.66 6.18C20.36 5.17 19.15 4.05 18.32 3.02C17.51 2.03 17 1.35 17 1H16Z"></path></svg>'''
 CHEVRON = '''<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'''
 
 GH_ICON = '''<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>'''
@@ -172,18 +177,32 @@ php artisan filament:assets''', "bash")}
 
 
 def honey_btn(href: str, label: str) -> str:
-    return f'''<a data-btn-honey href="{href}" class="btn-honey" aria-label="{label}">
-  <span class="label">{label}</span>
-  <span class="orb" aria-hidden="true">{CHEVRON}</span>
-</a>'''
+    return f'''<div data-btn-honey class="btn-honey-wrap">
+  <a href="{href}" class="btn-honey" aria-label="{label}">
+    <div data-horizon-glow aria-hidden="true"></div>
+    <span data-expanding-bg aria-hidden="true"></span>
+    <span data-text>{label}</span>
+    <span data-rocket-container>
+      <span class="rocket-stage" aria-hidden="true">
+        <div data-meteor style="top:-2.2rem">{METEOR}</div>
+        <div data-meteor class="opacity-50" style="top:-1.7rem;transform:scale(.75)">{METEOR}</div>
+        <div data-meteor style="top:0">{METEOR}</div>
+        <div data-meteor class="opacity-50" style="top:.75rem;transform:scale(.75)">{METEOR}</div>
+        <div data-rocket-bob>{ROCKET_SVG}</div>
+      </span>
+    </span>
+  </a>
+</div>'''
 
 
 def ghost_btn(href: str, label: str) -> str:
-    return f'''<a data-btn-ghost href="{href}" class="btn-ghost" aria-label="{label}" target="_blank" rel="noopener">
-  <span class="swap" aria-hidden="true">{GH_ICON}</span>
-  <span class="label">{label}</span>
-  {ARROW}
-</a>'''
+    return f'''<div data-btn-ghost class="btn-ghost-wrap">
+  <a href="{href}" class="btn-ghost" aria-label="{label}" target="_blank" rel="noopener">
+    <span data-swap-icon>{GH_ICON}</span>
+    <span data-text>{label}</span>
+    {ARROW}
+  </a>
+</div>'''
 
 
 def plain_btn(href: str, label: str) -> str:
@@ -332,6 +351,7 @@ def shell(title: str, description: str, body: str, prefix: str = "", active: str
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="{fonts}" rel="stylesheet">
 <link rel="stylesheet" href="{css_href}">
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script defer src="{js_href}"></script>
 </head>
 <body>
@@ -388,7 +408,7 @@ def build_index():
         </div>
       </div>
       <div class="hero-art">
-        <img src="images/cover.png" alt="Filament File Explorer cover" width="1200" height="750" fetchpriority="high" decoding="async">
+        <img src="images/docs-hero-art.png" alt="Filament File Explorer UI" width="1536" height="1024" fetchpriority="high" decoding="async">
       </div>
     </div>
   </section>
@@ -512,7 +532,7 @@ def build_guides():
         </div>
       </div>
       <div class="hero-art">
-        <img src="../images/cover.png" alt="Filament File Explorer cover" width="1200" height="750" loading="lazy" decoding="async">
+        <img src="../images/docs-hero-art.png" alt="Filament File Explorer UI" width="1536" height="1024" loading="lazy" decoding="async">
       </div>
     </div>
   </section>
