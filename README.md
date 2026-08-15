@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/">
-    <img src="docs/images/cover.png" alt="Filament File Explorer — Finder-style files for Filament" width="920">
+  <a href="https://ardavanshamroshan.github.io/filament-file-explorer/" class="filament-hidden">
+    <img src="https://raw.githubusercontent.com/ardavanshamroshan/filament-file-explorer/main/docs/images/cover.png" alt="Filament File Explorer — Finder-style files for Filament" width="920">
   </a>
 </p>
 
@@ -51,6 +51,8 @@
 
 ---
 
+<div class="filament-hidden">
+
 ## Screenshots
 
 | Grid | List + Get Info |
@@ -60,6 +62,8 @@
 | Context menu | Files table |
 |--------------|-------------|
 | ![Context](docs/images/explorer-context-menu.png) | ![Table](docs/images/files-table.png) |
+
+</div>
 
 ---
 
