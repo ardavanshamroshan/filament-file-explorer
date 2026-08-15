@@ -6,7 +6,14 @@ Version numbering reflects the in-app file explorer evolution in erp.cbiha
 before this standalone package (Finder UI, drag selection, ACL, list/explorer
 split, and full filemanager merge — five feature cycles).
 
-## Unreleased
+## 0.5.2 - 2026-08-15
+
+### Changed
+
+- README cover and screenshots marked `filament-hidden` so they are not duplicated on filamentphp.com
+- README cover image served from an absolute raw GitHub URL
+
+## 0.5.1 - 2026-08-12
 
 ### Added
 
